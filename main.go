@@ -14,6 +14,7 @@ func main() {
 	// app.Static("/static", "./public")
 
 	routes.PublicRoutes(app)
+	routes.SwaggerRoutes(app)
 
 	utils.StartServerWithGracefulShutdown(app)
 }

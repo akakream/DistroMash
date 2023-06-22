@@ -1,6 +1,9 @@
 package routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/akakream/DistroMash/app/controllers"
+	"github.com/gofiber/fiber/v2"
+)
 
 func PublicRoutes(app *fiber.App) {
 	api := app.Group("/api") // /api
@@ -18,5 +21,5 @@ func PublicRoutes(app *fiber.App) {
 		return c.SendString(c.Params("tag"))
 	})
 
-	v1.Get("/crdt", Get)
+	v1.Get("/crdt", controllers.GetCrdtList)
 }

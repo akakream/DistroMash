@@ -21,3 +21,5 @@ vendor:
 lint:
 	golangci-lint run -v ./...
 
+swag:
+	swag init
