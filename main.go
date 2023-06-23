@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/akakream/DistroMash/logger"
 	"github.com/akakream/DistroMash/pkg/configs"
 	"github.com/akakream/DistroMash/pkg/routes"
 	"github.com/akakream/DistroMash/pkg/utils"
@@ -17,6 +18,8 @@ import (
 // @host localhost:3000
 // @BasePath /api/v1
 func main() {
+	utils.InitSettings()
+	logger.Init()
 	config := configs.NewConfig()
 	app := fiber.New(config)
 	// app.Static("/static", "./public")
