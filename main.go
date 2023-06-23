@@ -8,6 +8,14 @@ import (
 	"github.com/akakream/DistroMash/pkg/utils"
 )
 
+// @title DistroMash API
+// @version 1.0
+// @description DistroMash meshes your Docker Distribution
+// @termsOfService http://swagger.io/terms/
+// @contact.name Ahmet Kerem Aksoy
+// @contact.email a.aksoy@tu-berlin.de
+// @host localhost:3000
+// @BasePath /api/v1
 func main() {
 	config := configs.NewConfig()
 	app := fiber.New(config)

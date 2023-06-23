@@ -22,4 +22,5 @@ func PublicRoutes(app *fiber.App) {
 	})
 
 	v1.Get("/crdt", controllers.GetCrdtList)
+	v1.Get("/crdt/:key?", controllers.GetCrdtValue)
 }

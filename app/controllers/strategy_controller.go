@@ -2,6 +2,6 @@ package controllers
 
 import "github.com/gofiber/fiber/v2"
 
-func etCrdtList(c *fiber.Ctx) error {
+func GetStrategy(c *fiber.Ctx) error {
 	return c.SendString("CRDTS")
 }

@@ -1,4 +1,60 @@
+basePath: /api/v1
+definitions:
+  models.Crdt:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+host: localhost:3000
 info:
-  contact: {}
-paths: {}
+  contact:
+    email: a.aksoy@tu-berlin.de
+    name: Ahmet Kerem Aksoy
+  description: DistroMash meshes your Docker Distribution
+  termsOfService: http://swagger.io/terms/
+  title: DistroMash API
+  version: "1.0"
+paths:
+  /api/v1/crdt:
+    get:
+      consumes:
+      - application/json
+      description: Get all CRDT key-value pairs.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Crdt'
+            type: array
+      summary: get all crdt key-value pairs
+      tags:
+      - Crdts
+  /api/v1/crdt/{key}:
+    get:
+      consumes:
+      - application/json
+      description: Get the CRDT value by key.
+      parameters:
+      - description: Key of Value
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Crdt'
+            type: array
+      summary: get crdt value by given key
+      tags:
+      - Crdt
 swagger: "2.0"
