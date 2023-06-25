@@ -1,5 +1,7 @@
 package logger
 
+// CURRENTLY NOT USED
+
 import (
 	"io"
 	"log"

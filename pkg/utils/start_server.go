@@ -18,6 +18,8 @@ func StartServerWithGracefulShutdown(app *fiber.App) {
 		signal.Notify(sigint, os.Interrupt)
 		<-sigint
 
+		log.Println("Shutting down the server...")
+
 		// Received an interrupt signal, shutdown.
 		if err := app.Shutdown(); err != nil {
 			// Error from closing listeners, or context timeout:

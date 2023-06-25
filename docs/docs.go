@@ -20,7 +20,62 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/crdt": {
+        "/": {
+            "get": {
+                "description": "Get the home page.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Home"
+                ],
+                "summary": "get the home page",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strategy/{name}": {
+            "get": {
+                "description": "Get the strategy.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "get the strategy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of Strategy",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Strategy"
+                        }
+                    }
+                }
+            }
+        },
+        "/crdt": {
             "get": {
                 "description": "Get all CRDT key-value pairs.",
                 "consumes": [
@@ -30,7 +85,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Crdts"
+                    "Crdt"
                 ],
                 "summary": "get all crdt key-value pairs",
                 "responses": {
@@ -44,9 +99,41 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Post a CRDT key-value pair.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crdt"
+                ],
+                "summary": "post crdt key-value pair",
+                "parameters": [
+                    {
+                        "description": "Post Crdt",
+                        "name": "crdt",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Crdt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crdt"
+                        }
+                    }
+                }
             }
         },
-        "/api/v1/crdt/{key}": {
+        "/crdt/{key}": {
             "get": {
                 "description": "Get the CRDT value by key.",
                 "consumes": [
@@ -72,9 +159,90 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "$ref": "#/definitions/models.Crdt"
+                        }
+                    }
+                }
+            }
+        },
+        "/strategy": {
+            "get": {
+                "description": "Get all strategies.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "get all strategies",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Crdt"
+                                "$ref": "#/definitions/models.Strategy"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Post the strategy.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "post the strategy",
+                "parameters": [
+                    {
+                        "description": "Name of Strategy",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Strategy"
+                        }
+                    }
+                }
+            }
+        },
+        "/strategy/registered": {
+            "get": {
+                "description": "Get registered strategies.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "get registered strategies",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Strategy"
                             }
                         }
                     }
@@ -90,6 +258,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Strategy": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }

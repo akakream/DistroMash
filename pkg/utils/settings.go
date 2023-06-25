@@ -1,32 +1,50 @@
 package utils
 
 import (
-	"log"
+	"errors"
 	"os"
 
 	"github.com/joho/godotenv"
 )
 
 var (
-	BaseURL     string
-	Environment string
+	err               error
+	BaseURL           string
+	Environment       string
+	Libp2pURL         string
+	ErrEnvVarNotFound = errors.New("environment variable is not found in the .env file")
 )
 
-func InitSettings() {
+func InitSettings() error {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	BaseURL = getEnv("BASE_URL", "localhost:3000")
-	Environment = getEnv("ENVIRONMENT", "DEV")
+	BaseURL, err = getEnv("BASE_URL", "localhost:3000")
+	if err != nil {
+		return err
+	}
+	Environment, err = getEnv("ENVIRONMENT", "DEV")
+	if err != nil {
+		return err
+	}
+	Libp2pURL, err = getEnv("LIBP2P_URL", "")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func getEnv(envVar string, defaultValue string) string {
+func getEnv(envVar string, defaultValue string) (string, error) {
 	value, exists := os.LookupEnv(envVar)
 	if !exists {
-		return defaultValue
+		if defaultValue != "" {
+			return "", ErrEnvVarNotFound
+		} else {
+			return defaultValue, nil
+		}
 	} else {
-		return value
+		return value, nil
 	}
 }
 

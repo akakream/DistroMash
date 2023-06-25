@@ -7,9 +7,8 @@ import (
 
 func NewConfig() fiber.Config {
 	return fiber.Config{
-		Views:         newTemplateEngine(),
-		CaseSensitive: true,
-		AppName:       "DistroMash v1.0.1",
+		Views:   newTemplateEngine(),
+		AppName: "DistroMash v1.0.1",
 	}
 }
 

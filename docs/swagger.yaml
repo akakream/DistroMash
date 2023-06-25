@@ -7,6 +7,11 @@ definitions:
       value:
         type: string
     type: object
+  models.Strategy:
+    properties:
+      name:
+        type: string
+    type: object
 host: localhost:3000
 info:
   contact:
@@ -17,7 +22,43 @@ info:
   title: DistroMash API
   version: "1.0"
 paths:
-  /api/v1/crdt:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Get the home page.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: get the home page
+      tags:
+      - Home
+  /api/v1/strategy/{name}:
+    get:
+      consumes:
+      - application/json
+      description: Get the strategy.
+      parameters:
+      - description: Name of Strategy
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Strategy'
+      summary: get the strategy
+      tags:
+      - Strategy
+  /crdt:
     get:
       consumes:
       - application/json
@@ -33,8 +74,29 @@ paths:
             type: array
       summary: get all crdt key-value pairs
       tags:
-      - Crdts
-  /api/v1/crdt/{key}:
+      - Crdt
+    post:
+      consumes:
+      - application/json
+      description: Post a CRDT key-value pair.
+      parameters:
+      - description: Post Crdt
+        in: body
+        name: crdt
+        required: true
+        schema:
+          $ref: '#/definitions/models.Crdt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Crdt'
+      summary: post crdt key-value pair
+      tags:
+      - Crdt
+  /crdt/{key}:
     get:
       consumes:
       - application/json
@@ -51,10 +113,63 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Crdt'
-            type: array
+            $ref: '#/definitions/models.Crdt'
       summary: get crdt value by given key
       tags:
       - Crdt
+  /strategy:
+    get:
+      consumes:
+      - application/json
+      description: Get all strategies.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Strategy'
+            type: array
+      summary: get all strategies
+      tags:
+      - Strategy
+    post:
+      consumes:
+      - application/json
+      description: Post the strategy.
+      parameters:
+      - description: Name of Strategy
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Strategy'
+      summary: post the strategy
+      tags:
+      - Strategy
+  /strategy/registered:
+    get:
+      consumes:
+      - application/json
+      description: Get registered strategies.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Strategy'
+            type: array
+      summary: get registered strategies
+      tags:
+      - Strategy
 swagger: "2.0"

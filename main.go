@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"log"
 
-	"github.com/akakream/DistroMash/logger"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+
 	"github.com/akakream/DistroMash/pkg/configs"
 	"github.com/akakream/DistroMash/pkg/routes"
 	"github.com/akakream/DistroMash/pkg/utils"
@@ -18,12 +20,18 @@ import (
 // @host localhost:3000
 // @BasePath /api/v1
 func main() {
-	utils.InitSettings()
-	logger.Init()
+	err := utils.InitSettings()
+	if err != nil {
+		log.Fatalf("error while initializing the settings, please check the .env file: %v.\n", err)
+	}
 	config := configs.NewConfig()
 	app := fiber.New(config)
 	// app.Static("/static", "./public")
+	if utils.IsEnvDev() {
+		app.Use(cors.New())
+	}
 
+	routes.IndexRoutes(app)
 	routes.PublicRoutes(app)
 	routes.SwaggerRoutes(app)
 
