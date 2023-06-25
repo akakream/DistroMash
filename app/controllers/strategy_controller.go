@@ -9,7 +9,7 @@ import "github.com/gofiber/fiber/v2"
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Strategy
-// @Router /strategy [get]
+// @Router /api/v1/strategy [get]
 func GetStrategyList(c *fiber.Ctx) error {
 	return c.SendString("Strategy")
 }
@@ -35,7 +35,7 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Produce json
 // @Param name body string true "Name of Strategy"
 // @Success 200 {object} models.Strategy
-// @Router /strategy [post]
+// @Router /api/v1/strategy [post]
 func PostStrategy(c *fiber.Ctx) error {
 	return c.SendString("Strategy A")
 }
@@ -47,7 +47,7 @@ func PostStrategy(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Strategy
-// @Router /strategy/registered [get]
+// @Router /api/v1/strategy/registered [get]
 func GetRegisteredStrategyList(c *fiber.Ctx) error {
 	return c.SendString("Registered Strategy")
 }

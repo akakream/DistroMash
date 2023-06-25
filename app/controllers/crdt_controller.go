@@ -21,7 +21,7 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Crdt
-// @Router /crdt [get]
+// @Router /api/v1/crdt [get]
 func GetCrdtList(c *fiber.Ctx) error {
 	data, err := getCrdtList()
 	// Return status 500 Internal Server Error.
@@ -75,7 +75,7 @@ func getCrdtList() ([]models.Crdt, error) {
 // @Produce json
 // @Param key path string true "Key of Value"
 // @Success 200 {object} models.Crdt
-// @Router /crdt/{key} [get]
+// @Router /api/v1/crdt/{key} [get]
 func GetCrdtValue(c *fiber.Ctx) error {
 	data, err := getCrdtValue(c.Params("key"))
 	// Return status 500 Internal Server Error.
@@ -130,7 +130,7 @@ func getCrdtValue(key string) (*models.Crdt, error) {
 // @Produce json
 // @Param crdt body models.Crdt true "Post Crdt"
 // @Success 200 {object} models.Crdt
-// @Router /crdt [post]
+// @Router /api/v1/crdt [post]
 func PostCrdtValue(c *fiber.Ctx) error {
 	err := postCrdtKeyValue(c.Body())
 	// Return status 500 Internal Server Error.
@@ -197,4 +197,26 @@ func getErrorFromResponse(response *http.Response) (string, error) {
 type apiNonOKResponse struct {
 	Err    string
 	Status int
+}
+
+// GetCrdtList gets the whole CRDT store.
+// @Description Get all CRDT key-value pairs.
+// @Summary get all crdt key-value pairs
+// @Tags Crdt
+// @Accept json
+// @Success 200 {array} models.Crdt
+// @Router /ui/crdt [get]
+func GetCrdtListUI(c *fiber.Ctx) error {
+	data, err := getCrdtList()
+	// Return status 500 Internal Server Error.
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	return c.Render("crdt", fiber.Map{
+		"Crdt": data,
+	}, "base")
 }

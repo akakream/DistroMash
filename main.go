@@ -18,7 +18,6 @@ import (
 // @contact.name Ahmet Kerem Aksoy
 // @contact.email a.aksoy@tu-berlin.de
 // @host localhost:3000
-// @BasePath /api/v1
 func main() {
 	err := utils.InitSettings()
 	if err != nil {
@@ -33,6 +32,7 @@ func main() {
 
 	routes.IndexRoutes(app)
 	routes.PublicRoutes(app)
+	routes.UiRoutes(app)
 	routes.SwaggerRoutes(app)
 
 	utils.StartServerWithGracefulShutdown(app)

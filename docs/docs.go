@@ -43,39 +43,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/strategy/{name}": {
-            "get": {
-                "description": "Get the strategy.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Strategy"
-                ],
-                "summary": "get the strategy",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name of Strategy",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Strategy"
-                        }
-                    }
-                }
-            }
-        },
-        "/crdt": {
+        "/api/v1/crdt": {
             "get": {
                 "description": "Get all CRDT key-value pairs.",
                 "consumes": [
@@ -133,7 +101,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/crdt/{key}": {
+        "/api/v1/crdt/{key}": {
             "get": {
                 "description": "Get the CRDT value by key.",
                 "consumes": [
@@ -165,7 +133,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/strategy": {
+        "/api/v1/strategy": {
             "get": {
                 "description": "Get all strategies.",
                 "consumes": [
@@ -223,7 +191,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/strategy/registered": {
+        "/api/v1/strategy/registered": {
             "get": {
                 "description": "Get registered strategies.",
                 "consumes": [
@@ -243,6 +211,61 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.Strategy"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strategy/{name}": {
+            "get": {
+                "description": "Get the strategy.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "get the strategy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of Strategy",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Strategy"
+                        }
+                    }
+                }
+            }
+        },
+        "/ui/crdt": {
+            "get": {
+                "description": "Get all CRDT key-value pairs.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crdt"
+                ],
+                "summary": "get all crdt key-value pairs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Crdt"
                             }
                         }
                     }
@@ -277,7 +300,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:3000",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "DistroMash API",
 	Description:      "DistroMash meshes your Docker Distribution",

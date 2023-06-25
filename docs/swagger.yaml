@@ -1,4 +1,3 @@
-basePath: /api/v1
 definitions:
   models.Crdt:
     properties:
@@ -37,28 +36,7 @@ paths:
       summary: get the home page
       tags:
       - Home
-  /api/v1/strategy/{name}:
-    get:
-      consumes:
-      - application/json
-      description: Get the strategy.
-      parameters:
-      - description: Name of Strategy
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Strategy'
-      summary: get the strategy
-      tags:
-      - Strategy
-  /crdt:
+  /api/v1/crdt:
     get:
       consumes:
       - application/json
@@ -96,7 +74,7 @@ paths:
       summary: post crdt key-value pair
       tags:
       - Crdt
-  /crdt/{key}:
+  /api/v1/crdt/{key}:
     get:
       consumes:
       - application/json
@@ -117,7 +95,7 @@ paths:
       summary: get crdt value by given key
       tags:
       - Crdt
-  /strategy:
+  /api/v1/strategy:
     get:
       consumes:
       - application/json
@@ -155,7 +133,28 @@ paths:
       summary: post the strategy
       tags:
       - Strategy
-  /strategy/registered:
+  /api/v1/strategy/{name}:
+    get:
+      consumes:
+      - application/json
+      description: Get the strategy.
+      parameters:
+      - description: Name of Strategy
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Strategy'
+      summary: get the strategy
+      tags:
+      - Strategy
+  /api/v1/strategy/registered:
     get:
       consumes:
       - application/json
@@ -172,4 +171,19 @@ paths:
       summary: get registered strategies
       tags:
       - Strategy
+  /ui/crdt:
+    get:
+      consumes:
+      - application/json
+      description: Get all CRDT key-value pairs.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Crdt'
+            type: array
+      summary: get all crdt key-value pairs
+      tags:
+      - Crdt
 swagger: "2.0"
