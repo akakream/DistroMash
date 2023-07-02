@@ -248,29 +248,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/ui/crdt": {
-            "get": {
-                "description": "Get all CRDT key-value pairs.",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Crdt"
-                ],
-                "summary": "get all crdt key-value pairs",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Crdt"
-                            }
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {

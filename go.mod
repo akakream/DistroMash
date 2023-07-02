@@ -3,6 +3,7 @@ module github.com/akakream/DistroMash
 go 1.19
 
 require (
+	github.com/go-kit/log v0.2.1
 	github.com/gofiber/fiber/v2 v2.47.0
 	github.com/gofiber/swagger v0.1.12
 	github.com/gofiber/template/html/v2 v2.0.4
@@ -13,7 +14,6 @@ require (
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect

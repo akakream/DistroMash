@@ -199,13 +199,6 @@ type apiNonOKResponse struct {
 	Status int
 }
 
-// GetCrdtList gets the whole CRDT store.
-// @Description Get all CRDT key-value pairs.
-// @Summary get all crdt key-value pairs
-// @Tags Crdt
-// @Accept json
-// @Success 200 {array} models.Crdt
-// @Router /ui/crdt [get]
 func GetCrdtListUI(c *fiber.Ctx) error {
 	data, err := getCrdtList()
 	// Return status 500 Internal Server Error.

@@ -25,7 +25,8 @@ func main() {
 	}
 	config := configs.NewConfig()
 	app := fiber.New(config)
-	// app.Static("/static", "./public")
+	app.Static("/static", "./static")
+
 	if utils.IsEnvDev() {
 		app.Use(cors.New())
 	}

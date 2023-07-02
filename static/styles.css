@@ -1,0 +1,23 @@
+a {
+  text-decoration: none;
+}
+
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.topnav a {
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.topnav a:hover {
+  background-color: #2b2b2b;
+}
+
+.topnav a.active {
+  background-color: #2b2b2b;
+}

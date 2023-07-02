@@ -171,19 +171,4 @@ paths:
       summary: get registered strategies
       tags:
       - Strategy
-  /ui/crdt:
-    get:
-      consumes:
-      - application/json
-      description: Get all CRDT key-value pairs.
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Crdt'
-            type: array
-      summary: get all crdt key-value pairs
-      tags:
-      - Crdt
 swagger: "2.0"
