@@ -8,6 +8,11 @@ definitions:
     type: object
   models.Image:
     properties:
+      name:
+        type: string
+    type: object
+  models.ImageWithCID:
+    properties:
       cid:
         type: string
       name:
@@ -120,7 +125,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Image'
+            $ref: '#/definitions/models.ImageWithCID'
       summary: upload a multi-platform docker image to ipfs and get the cid
       tags:
       - Image

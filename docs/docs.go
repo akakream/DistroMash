@@ -161,7 +161,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Image"
+                            "$ref": "#/definitions/models.ImageWithCID"
                         }
                     }
                 }
@@ -297,6 +297,14 @@ const docTemplate = `{
             }
         },
         "models.Image": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ImageWithCID": {
             "type": "object",
             "properties": {
                 "cid": {

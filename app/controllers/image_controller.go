@@ -18,7 +18,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param crdt body models.Image true "Post Image"
-// @Success 200 {object} models.Image
+// @Success 200 {object} models.ImageWithCID
 // @Router /api/v1/image [post]
 func PostImage(c *fiber.Ctx) error {
 	cidTagPair, err := uploadImage2IPFS(c.Body())
@@ -53,7 +53,7 @@ func PostImage(c *fiber.Ctx) error {
 	})
 }
 
-func uploadImage2IPFS(imageName []byte) (*models.Image, error) {
+func uploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
 	url := fmt.Sprintf("http://%s/image", utils.Multiplatform2ipfsURL)
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(imageName))
@@ -75,7 +75,7 @@ func uploadImage2IPFS(imageName []byte) (*models.Image, error) {
 		return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
 	}
 
-	var data models.Image
+	var data models.ImageWithCID
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return nil, err
 	}

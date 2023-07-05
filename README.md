@@ -4,7 +4,7 @@ DistroMash meshes your docker image distribution.
 
 ## TODO
 
-- ADD LOGGER
+- ADD LOGGER!!!
 
 - Do I need a database?? Everything is distributed through CRDT. Maybe to backup? In that case migrations? [https://github.com/golang-migrate/migrate#cli-usage](https://github.com/golang-migrate/migrate#cli-usage)
 
