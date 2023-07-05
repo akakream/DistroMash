@@ -6,6 +6,13 @@ definitions:
       value:
         type: string
     type: object
+  models.Image:
+    properties:
+      cid:
+        type: string
+      name:
+        type: string
+    type: object
   models.Strategy:
     properties:
       name:
@@ -95,6 +102,28 @@ paths:
       summary: get crdt value by given key
       tags:
       - Crdt
+  /api/v1/image:
+    post:
+      consumes:
+      - application/json
+      description: Upload a multi-platform docker image to ipfs and get the cid.
+      parameters:
+      - description: Post Image
+        in: body
+        name: crdt
+        required: true
+        schema:
+          $ref: '#/definitions/models.Image'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Image'
+      summary: upload a multi-platform docker image to ipfs and get the cid
+      tags:
+      - Image
   /api/v1/strategy:
     get:
       consumes:

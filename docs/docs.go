@@ -133,6 +133,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/image": {
+            "post": {
+                "description": "Upload a multi-platform docker image to ipfs and get the cid.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Image"
+                ],
+                "summary": "upload a multi-platform docker image to ipfs and get the cid",
+                "parameters": [
+                    {
+                        "description": "Post Image",
+                        "name": "crdt",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Image"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Image"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/strategy": {
             "get": {
                 "description": "Get all strategies.",
@@ -258,6 +292,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Image": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

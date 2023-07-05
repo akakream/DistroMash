@@ -8,11 +8,12 @@ import (
 )
 
 var (
-	err               error
-	BaseURL           string
-	Environment       string
-	Libp2pURL         string
-	ErrEnvVarNotFound = errors.New("environment variable is not found in the .env file")
+	err                   error
+	BaseURL               string
+	Environment           string
+	Libp2pURL             string
+	Multiplatform2ipfsURL string
+	ErrEnvVarNotFound     = errors.New("environment variable is not found in the .env file")
 )
 
 func InitSettings() error {
@@ -29,6 +30,10 @@ func InitSettings() error {
 		return err
 	}
 	Libp2pURL, err = getEnv("LIBP2P_URL", "")
+	if err != nil {
+		return err
+	}
+	Multiplatform2ipfsURL, err = getEnv("MULTIPLATFORM2IPFS_URL", "")
 	if err != nil {
 		return err
 	}
