@@ -87,6 +87,26 @@ paths:
       tags:
       - Crdt
   /api/v1/crdt/{key}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a CRDT key-value pair.
+      parameters:
+      - description: Key of Value
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Crdt'
+      summary: delete crdt key-value pair
+      tags:
+      - Crdt
     get:
       consumes:
       - application/json

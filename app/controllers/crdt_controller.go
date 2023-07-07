@@ -213,3 +213,54 @@ func GetCrdtListUI(c *fiber.Ctx) error {
 		"Crdt": data,
 	}, "base")
 }
+
+// DeleteCrdt deletes a CRDT key-value pair.
+// @Description Delete a CRDT key-value pair.
+// @Summary delete crdt key-value pair
+// @Tags Crdt
+// @Accept json
+// @Produce json
+// @Param key path string true "Key of Value"
+// @Success 200 {object} models.Crdt
+// @Router /api/v1/crdt/{key} [delete]
+func DeleteCrdtValue(c *fiber.Ctx) error {
+	err := deleteCrdtKeyValue(c.Params("key"))
+	// Return status 500 Internal Server Error.
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Return status 200 OK.
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"msg":   "success",
+	})
+}
+
+func deleteCrdtKeyValue(key string) error {
+	url := fmt.Sprintf("http://%s/crdt/%s", utils.Libp2pURL, key)
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	// Check response
+	if resp.StatusCode != http.StatusOK {
+		apiErr, err := getErrorFromResponse(resp)
+		if err != nil {
+			return fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+		}
+		return fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+	}
+
+	return nil
+}

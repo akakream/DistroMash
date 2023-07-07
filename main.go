@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/akakream/DistroMash/pkg/configs"
 	"github.com/akakream/DistroMash/pkg/routes"
@@ -30,6 +31,7 @@ func main() {
 	if utils.IsEnvDev() {
 		app.Use(cors.New())
 	}
+	app.Use(logger.New())
 
 	routes.IndexRoutes(app)
 	routes.PublicRoutes(app)

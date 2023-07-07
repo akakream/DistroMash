@@ -131,6 +131,36 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Delete a CRDT key-value pair.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crdt"
+                ],
+                "summary": "delete crdt key-value pair",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Key of Value",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crdt"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/image": {

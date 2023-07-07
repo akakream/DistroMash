@@ -21,30 +21,33 @@ import (
 // @Success 200 {object} models.ImageWithCID
 // @Router /api/v1/image [post]
 func PostImage(c *fiber.Ctx) error {
-	cidTagPair, err := uploadImage2IPFS(c.Body())
+	resp, err := uploadImage2IPFS(c.Body())
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
+	_ = resp
 
-	// Add the cid to the CRDT key value store
-	crdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Name, Value: cidTagPair.Cid})
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-	err = postCrdtKeyValue(crdtPayload)
-	// Return status 500 Internal Server Error.
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
+	/*
+		// Add the cid to the CRDT key value store
+		crdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Name, Value: cidTagPair.Cid})
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+		err = postCrdtKeyValue(crdtPayload)
+		// Return status 500 Internal Server Error.
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+	*/
 
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
