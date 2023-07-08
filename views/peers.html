@@ -1,0 +1,14 @@
+<h1>Peers</h1>
+<ul
+  style="
+    height: 250px;
+    overflow-y: scroll;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 1px;
+  "
+>
+  {{range .Peers}}
+  <li class="peer">{{.}}</li>
+  {{end}}
+</ul>

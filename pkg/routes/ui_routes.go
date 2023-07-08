@@ -10,4 +10,5 @@ func UiRoutes(app *fiber.App) {
 
 	ui.Get("/crdt", controllers.GetCrdtListUI)
 	ui.Get("/strategy", controllers.GetStrategyListUI)
+	ui.Get("/peers", controllers.GetPeersListUI)
 }
