@@ -11,6 +11,33 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func GetPeersListUI(c *fiber.Ctx) error {
+    identity, err := getIdentity()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+    data, err := getPeersList()
+	// Return status 500 Internal Server Error.
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	peers := strings.Split(data.Peers, ",")
+
+	return c.Render("peers", fiber.Map{
+		"Peers": peers,
+        "HostID": identity.ID,
+        "HostAddrs": identity.Addrs,
+	}, "base")
+}
+
 func getPeersList() (*models.Peers, error) {
 	url := fmt.Sprintf("http://%s/peers", utils.Libp2pURL)
 	req, err := http.NewRequest("GET", url, nil)
@@ -39,19 +66,30 @@ func getPeersList() (*models.Peers, error) {
 	return &data, nil
 }
 
-func GetPeersListUI(c *fiber.Ctx) error {
-	data, err := getPeersList()
-	// Return status 500 Internal Server Error.
+func getIdentity() (*models.Peer, error) {
+	url := fmt.Sprintf("http://%s/identity", utils.Libp2pURL)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
 	}
 
-	peers := strings.Split(data.Peers, ",")
+	// Check response
+	if resp.StatusCode != http.StatusOK {
+		apiErr, err := getErrorFromResponse(resp)
+		if err != nil {
+			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+		}
+		return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+	}
 
-	return c.Render("peers", fiber.Map{
-		"Peers": peers,
-	}, "base")
+	var data models.Peer
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }

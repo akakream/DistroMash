@@ -1,4 +1,14 @@
-<h1>Peers</h1>
+<h2>My Identity</h2>
+<h3>ID</h3>
+<p class="id">{{.HostID}}</p>
+<h3>Addresses</h3>
+<ul>
+  {{range .HostAddrs}}
+  <li class="addr">{{.}}</li>
+  {{end}}
+</ul>
+
+<h2>Peers</h2>
 <ul
   style="
     height: 250px;
