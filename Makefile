@@ -3,14 +3,14 @@
 BUILD_NAME = distromash
 BUILD_DIR = $(PWD)/bin
 
-clean:
-	rm -rf $(BUILD_DIR)
-
 build:
 	@go build -o $(BUILD_DIR)/$(BUILD_NAME)
 
 run:
 	@$(BUILD_DIR)/$(BUILD_NAME) run
+
+clean:
+	rm -rf $(BUILD_DIR)
 
 test:
 	go test -v ./... -count=1

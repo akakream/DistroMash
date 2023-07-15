@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/akakream/DistroMash/app/models"
 	"github.com/akakream/DistroMash/pkg/utils"
@@ -20,7 +19,7 @@ func GetPeersListUI(c *fiber.Ctx) error {
 		})
 	}
 
-    data, err := getPeersList()
+    peers, err := getPeersList()
 	// Return status 500 Internal Server Error.
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -29,10 +28,10 @@ func GetPeersListUI(c *fiber.Ctx) error {
 		})
 	}
 
-	peers := strings.Split(data.Peers, ",")
+	// peers := strings.Split(data.Peers, ",")
 
 	return c.Render("peers", fiber.Map{
-		"Peers": peers,
+		"Peers": peers.Peers,
         "HostID": identity.ID,
         "HostAddrs": identity.Addrs,
 	}, "base")
