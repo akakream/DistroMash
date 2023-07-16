@@ -33,21 +33,6 @@ info:
   title: DistroMash API
   version: "1.0"
 paths:
-  /:
-    get:
-      consumes:
-      - application/json
-      description: Get the home page.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      summary: get the home page
-      tags:
-      - Home
   /api/v1/crdt:
     get:
       consumes:

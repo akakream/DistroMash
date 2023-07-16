@@ -18,6 +18,9 @@ test:
 vendor:
 	@go mod vendor
 
+tidy:
+	@go mod tidy
+
 lint:
 	golangci-lint run -v ./...
 

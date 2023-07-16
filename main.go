@@ -33,7 +33,6 @@ func main() {
 	}
 	app.Use(logger.New())
 
-	routes.IndexRoutes(app)
 	routes.PublicRoutes(app)
 	routes.UiRoutes(app)
 	routes.SwaggerRoutes(app)

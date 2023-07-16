@@ -6,9 +6,9 @@ import (
 )
 
 func UiRoutes(app *fiber.App) {
-	ui := app.Group("/ui")
+	app.Get("/", controllers.GetHomeUI)
 
-	ui.Get("/crdt", controllers.GetCrdtListUI)
-	ui.Get("/strategy", controllers.GetStrategyListUI)
-	ui.Get("/peers", controllers.GetPeersListUI)
+	app.Get("/crdt", controllers.GetCrdtListUI)
+	app.Get("/strategy", controllers.GetStrategyListUI)
+	app.Get("/peers", controllers.GetPeersListUI)
 }
