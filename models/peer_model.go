@@ -7,5 +7,5 @@ type Peer struct {
 }
 
 type Peers struct {
-	Peers []string `json:"peers"`
+	Peers []Peer `json:"peers"`
 }

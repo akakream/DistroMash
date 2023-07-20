@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/akakream/DistroMash/models"
@@ -52,24 +53,31 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Tags Strategy
 // @Accept json
 // @Produce json
-// @Param name body string true "Name of Strategy"
+// @Param strategy body models.Strategy true "Post Strategy"
 // @Success 200 {object} models.Strategy
 // @Router /api/v1/strategy [post]
 func PostStrategy(c *fiber.Ctx) error {
-	var strategy *models.Strategy
-	if err := json.Unmarshal(c.Body(), strategy); err != nil {
+	var strategy models.Strategy
+	if err := json.Unmarshal(c.Body(), &strategy); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
 
+    if err := checkInput(&strategy); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+    }
+
 	var key string
 	var value string
 	// TODO: DO THIS PART MAYBE IN GOROUTINE???
 	switch sType := strategy.Type; sType {
 	case strategies.StrategyPercentage:
-		k, v, err := strategies.ProcessStrategyPercentage(strategy)
+		k, v, err := strategies.ProcessStrategyPercentage(&strategy)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": true,
@@ -79,7 +87,7 @@ func PostStrategy(c *fiber.Ctx) error {
 		key = k
 		value = v
 	case strategies.StrategySomethingelse:
-		fmt.Println("WUT")
+		fmt.Println("StrategySomethingelse")
 	}
 
 	// Call crdt api and register the strategy
@@ -87,6 +95,7 @@ func PostStrategy(c *fiber.Ctx) error {
 		Key:   key,
 		Value: value,
 	}
+    fmt.Printf("Key: %s Value: %s", key, value)
 
 	byteStrategyKeyValue, err := json.Marshal(strategyKeyValue)
 	if err != nil {
@@ -116,10 +125,6 @@ func GetRegisteredStrategyList(c *fiber.Ctx) error {
 	return c.SendString("Registered Strategy")
 }
 
-func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
-	return []models.Strategy{{Type: "Strategy1"}, {Type: "Strategy2"}}, nil
-}
-
 func GetStrategyListUI(c *fiber.Ctx) error {
 	data, err := getStrategyList(c)
 	// Return status 500 Internal Server Error.
@@ -133,4 +138,15 @@ func GetStrategyListUI(c *fiber.Ctx) error {
 	return c.Render("strategy", fiber.Map{
 		"Strategy": data,
 	}, "base")
+}
+
+func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
+	return []models.Strategy{{Type: "Strategy1"}, {Type: "Strategy2"}}, nil
+}
+
+func checkInput(strategy *models.Strategy) error {
+    if strategy.Percentage >= 100 || strategy.Percentage <= 0 {
+        return errors.New("Percentage must be between 0 and 100")
+    }
+    return nil
 }

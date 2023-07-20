@@ -20,7 +20,13 @@ definitions:
     type: object
   models.Strategy:
     properties:
-      name:
+      execute:
+        type: boolean
+      percentage:
+        type: integer
+      tag:
+        type: string
+      type:
         type: string
     type: object
 host: localhost:3000
@@ -156,12 +162,12 @@ paths:
       - application/json
       description: Post the strategy.
       parameters:
-      - description: Name of Strategy
+      - description: Post Strategy
         in: body
-        name: name
+        name: strategy
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/models.Strategy'
       produces:
       - application/json
       responses:

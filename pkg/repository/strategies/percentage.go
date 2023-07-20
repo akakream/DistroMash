@@ -2,15 +2,16 @@ package strategies
 
 import (
 	"math/rand"
+	"strconv"
 	"strings"
 
 	"github.com/akakream/DistroMash/models"
-    "github.com/akakream/DistroMash/pkg/repository/peer"
+	"github.com/akakream/DistroMash/pkg/repository/peer"
 )
 
 func ProcessStrategyPercentage(strategy *models.Strategy) (string, string, error) {
 	// Calculate involving peers
-	key, err := constructKey()
+	key, err := constructKey(strategy)
 	if err != nil {
 		return "", "", err
 	}
@@ -21,8 +22,9 @@ func ProcessStrategyPercentage(strategy *models.Strategy) (string, string, error
 	return key, value, nil
 }
 
-func constructKey() (string, error) {
-	return "", nil
+func constructKey(strategy *models.Strategy) (string, error) {
+    key := strings.Join([]string{strategy.Type, strategy.Tag, strconv.Itoa(strategy.Percentage)}, "-")
+	return key, nil
 }
 
 func constructValue(percentage float64) (string, error) {
@@ -37,14 +39,19 @@ func constructValue(percentage float64) (string, error) {
 		return "", err
 	}
 
-	return strings.Join(selectedPeers, ","), nil
+    var selectedPeerIDs []string
+    for _, p := range selectedPeers {
+        selectedPeerIDs = append(selectedPeerIDs, p.ID)
+    }
+
+	return strings.Join(selectedPeerIDs, ","), nil
 }
 
-func randomNPercentOfPeers(peers []string, percentage float64, seed int64) ([]string, error) {
+func randomNPercentOfPeers(peers []models.Peer, percentage float64, seed int64) ([]models.Peer, error) {
 	rand.Seed(seed)
 
 	selectedCount := int(float64(len(peers)) * percentage / 100)
-	selected := make([]string, selectedCount)
+	selected := make([]models.Peer, selectedCount)
 
 	for i := 0; i < selectedCount; i++ {
 		index := rand.Intn(len(peers))

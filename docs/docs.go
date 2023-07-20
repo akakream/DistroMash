@@ -213,12 +213,12 @@ const docTemplate = `{
                 "summary": "post the strategy",
                 "parameters": [
                     {
-                        "description": "Name of Strategy",
-                        "name": "name",
+                        "description": "Post Strategy",
+                        "name": "strategy",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Strategy"
                         }
                     }
                 ],
@@ -325,7 +325,16 @@ const docTemplate = `{
         "models.Strategy": {
             "type": "object",
             "properties": {
-                "name": {
+                "execute": {
+                    "type": "boolean"
+                },
+                "percentage": {
+                    "type": "integer"
+                },
+                "tag": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
