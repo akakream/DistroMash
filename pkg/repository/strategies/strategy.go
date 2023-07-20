@@ -1,4 +1,4 @@
-package repository
+package strategies
 
 const (
     StrategyPercentage = "percentage"

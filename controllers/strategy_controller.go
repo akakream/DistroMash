@@ -3,11 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"math/rand"
-	"strings"
 
-	"github.com/akakream/DistroMash/app/models"
-	"github.com/akakream/DistroMash/pkg/repository"
+	"github.com/akakream/DistroMash/models"
+	"github.com/akakream/DistroMash/pkg/repository/strategies"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -58,8 +56,8 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Success 200 {object} models.Strategy
 // @Router /api/v1/strategy [post]
 func PostStrategy(c *fiber.Ctx) error {
-	var strategy models.Strategy
-	if err := json.Unmarshal(c.Body(), &strategy); err != nil {
+	var strategy *models.Strategy
+	if err := json.Unmarshal(c.Body(), strategy); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
@@ -70,8 +68,8 @@ func PostStrategy(c *fiber.Ctx) error {
 	var value string
 	// TODO: DO THIS PART MAYBE IN GOROUTINE???
 	switch sType := strategy.Type; sType {
-	case repository.StrategyPercentage:
-		k, v, err := processStrategyPercentage()
+	case strategies.StrategyPercentage:
+		k, v, err := strategies.ProcessStrategyPercentage(strategy)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": true,
@@ -80,7 +78,7 @@ func PostStrategy(c *fiber.Ctx) error {
 		}
 		key = k
 		value = v
-	case repository.StrategySomethingelse:
+	case strategies.StrategySomethingelse:
 		fmt.Println("WUT")
 	}
 
@@ -104,53 +102,6 @@ func PostStrategy(c *fiber.Ctx) error {
 		"error": false,
 		"crdts": "fakedata",
 	})
-}
-
-func processStrategyPercentage() (string, string, error) {
-	// Calculate involving peers
-	key, err := constructKey()
-	if err != nil {
-		return "", "", err
-	}
-	value, err := constructValue()
-	if err != nil {
-		return "", "", err
-	}
-	return key, value, nil
-}
-
-func constructKey() (string, error) {
-	return "", nil
-}
-
-func constructValue() (string, error) {
-	peers, err := getPeersList()
-	// Return status 500 Internal Server Error.
-	if err != nil {
-		return "", err
-	}
-
-	selectedPeers, err := randomNPercentOfPeers(peers.Peers, 50, 1)
-	if err != nil {
-		return "", err
-	}
-
-	return strings.Join(selectedPeers, ","), nil
-}
-
-func randomNPercentOfPeers(peers []string, percentage float64, seed int64) ([]string, error) {
-	rand.Seed(seed)
-
-	selectedCount := int(float64(len(peers)) * percentage / 100)
-	selected := make([]string, selectedCount)
-
-	for i := 0; i < selectedCount; i++ {
-		index := rand.Intn(len(peers))
-		selected[i] = peers[index]
-		peers = append(peers[:index], peers[index+1:]...)
-	}
-
-	return selected, nil
 }
 
 // GetRegisteredStrategyList gets the registered strategies.

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/akakream/DistroMash/app/models"
+	"github.com/akakream/DistroMash/models"
 	"github.com/akakream/DistroMash/pkg/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -71,7 +71,7 @@ func uploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
 
 	// Check response
 	if resp.StatusCode != http.StatusOK {
-		apiErr, err := getErrorFromResponse(resp)
+		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
 			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
 		}

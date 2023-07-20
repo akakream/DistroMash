@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/akakream/DistroMash/app/controllers"
+	"github.com/akakream/DistroMash/controllers"
 	"github.com/gofiber/fiber/v2"
 )
 

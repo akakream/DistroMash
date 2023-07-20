@@ -4,13 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"log"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/akakream/DistroMash/app/models"
+	"github.com/akakream/DistroMash/models"
 	"github.com/akakream/DistroMash/pkg/utils"
 )
 
@@ -52,7 +50,7 @@ func getCrdtList() ([]models.Crdt, error) {
 
 	// Check response
 	if resp.StatusCode != http.StatusOK {
-		apiErr, err := getErrorFromResponse(resp)
+		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
 			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
 		}
@@ -107,7 +105,7 @@ func getCrdtValue(key string) (*models.Crdt, error) {
 
 	// Check response
 	if resp.StatusCode != http.StatusOK {
-		apiErr, err := getErrorFromResponse(resp)
+		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
 			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
 		}
@@ -163,7 +161,7 @@ func postCrdtKeyValue(keyValuePair []byte) error {
 
 	// Check response
 	if resp.StatusCode != http.StatusOK {
-		apiErr, err := getErrorFromResponse(resp)
+		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
 			return fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
 		}
@@ -178,26 +176,6 @@ func postCrdtKeyValue(keyValuePair []byte) error {
 	return nil
 }
 
-func getErrorFromResponse(response *http.Response) (string, error) {
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return "", err
-	}
-	defer response.Body.Close()
-
-	var bodyJson apiNonOKResponse
-	if err := json.Unmarshal(body, &bodyJson); err != nil {
-		log.Println(err)
-		return "", err
-	}
-
-	return bodyJson.Err, nil
-}
-
-type apiNonOKResponse struct {
-	Err    string
-	Status int
-}
 
 func GetCrdtListUI(c *fiber.Ctx) error {
 	data, err := getCrdtList()
@@ -255,7 +233,7 @@ func deleteCrdtKeyValue(key string) error {
 
 	// Check response
 	if resp.StatusCode != http.StatusOK {
-		apiErr, err := getErrorFromResponse(resp)
+		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
 			return fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
 		}
