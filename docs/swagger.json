@@ -224,33 +224,7 @@
                 }
             }
         },
-        "/api/v1/strategy/registered": {
-            "get": {
-                "description": "Get registered strategies.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Strategy"
-                ],
-                "summary": "get registered strategies",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Strategy"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/strategy/{name}": {
+        "/api/v1/strategy/{key}": {
             "get": {
                 "description": "Get the strategy.",
                 "consumes": [

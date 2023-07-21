@@ -1,6 +1,10 @@
 <h1>Strategies</h1>
 <ul>
   {{range .Strategy}}
-  <li class="strategy">{{.Type}}</li>
+  <li class="strategy">
+      Type: {{.Type}}
+      Tag: {{.Tag}}
+      Percentage: {{.Percentage}}
+  </li>
   {{end}}
 </ul>

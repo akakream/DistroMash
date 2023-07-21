@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/akakream/DistroMash/models"
 	"github.com/akakream/DistroMash/pkg/repository/strategies"
@@ -42,9 +44,30 @@ func GetStrategyList(c *fiber.Ctx) error {
 // @Produce json
 // @Param name path string true "Name of Strategy"
 // @Success 200 {object} models.Strategy
-// @Router /api/v1/strategy/{name} [get]
+// @Router /api/v1/strategy/{key} [get]
 func GetStrategy(c *fiber.Ctx) error {
-	return c.SendString("Strategy A")
+	data, err := getCrdtValue(c.Params("key"))
+	// Return status 500 Internal Server Error.
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+    strategy, err := parseStrategyFromKey(data.Key)    
+    if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+    }
+
+	// Return status 200 OK.
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error":      false,
+		"strategy": strategy,
+	})
 }
 
 // PostStrategy posts the strategy.
@@ -113,18 +136,6 @@ func PostStrategy(c *fiber.Ctx) error {
 	})
 }
 
-// GetRegisteredStrategyList gets the registered strategies.
-// @Description Get registered strategies.
-// @Summary get registered strategies
-// @Tags Strategy
-// @Accept json
-// @Produce json
-// @Success 200 {array} models.Strategy
-// @Router /api/v1/strategy/registered [get]
-func GetRegisteredStrategyList(c *fiber.Ctx) error {
-	return c.SendString("Registered Strategy")
-}
-
 func GetStrategyListUI(c *fiber.Ctx) error {
 	data, err := getStrategyList(c)
 	// Return status 500 Internal Server Error.
@@ -141,7 +152,55 @@ func GetStrategyListUI(c *fiber.Ctx) error {
 }
 
 func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
-	return []models.Strategy{{Type: "Strategy1"}, {Type: "Strategy2"}}, nil
+	data, err := getCrdtList()
+	if err != nil {
+        return nil, err
+	}
+    stypes, err := strategies.GetStrategyTypes()
+    if err != nil {
+        return nil, err
+    }
+
+    var existingStrategies []models.Strategy
+    for _, pair := range data {
+        strategy, err := parseStrategyFromKey(pair.Key)
+        if err != nil {
+            continue
+        }
+        if contains(stypes, strategy.Type) {
+            existingStrategies = append(existingStrategies, *strategy)
+        }
+    }
+
+    return existingStrategies, nil
+}
+
+func parseStrategyFromKey(key string) (*models.Strategy, error) {
+    keyFields := strings.Split(key, "-")
+    var strategy models.Strategy
+    for i, field := range keyFields {
+        if i == 0 {
+            strategy.Type = field
+        } else if i == 1 {
+            strategy.Tag = field
+        } else if i == 2 {
+            percentage, err := strconv.Atoi(field)
+            if err != nil {
+                return nil, err
+            }
+            strategy.Percentage = percentage
+        }
+    }
+    return &strategy, nil
+}
+
+func contains(slice []string, key string) bool {
+    for _, s := range slice {
+        if s == key {
+            return true
+        }
+    }
+    return false
 }
 
 func checkInput(strategy *models.Strategy) error {

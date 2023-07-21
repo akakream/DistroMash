@@ -10,7 +10,7 @@ func PublicRoutes(app *fiber.App) {
 	v1 := api.Group("/v1")   // /api/v1
 
 	v1.Get("/strategy", controllers.GetStrategyList)
-	v1.Get("/strategy/:name", controllers.GetStrategy)
+	v1.Get("/strategy/:key", controllers.GetStrategy)
 	v1.Post("/strategy", controllers.PostStrategy)
 
 	v1.Get("/dig/:tag", func(c *fiber.Ctx) error {

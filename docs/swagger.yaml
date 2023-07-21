@@ -178,7 +178,7 @@ paths:
       summary: post the strategy
       tags:
       - Strategy
-  /api/v1/strategy/{name}:
+  /api/v1/strategy/{key}:
     get:
       consumes:
       - application/json
@@ -197,23 +197,6 @@ paths:
           schema:
             $ref: '#/definitions/models.Strategy'
       summary: get the strategy
-      tags:
-      - Strategy
-  /api/v1/strategy/registered:
-    get:
-      consumes:
-      - application/json
-      description: Get registered strategies.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Strategy'
-            type: array
-      summary: get registered strategies
       tags:
       - Strategy
 swagger: "2.0"
