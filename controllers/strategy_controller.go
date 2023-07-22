@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/akakream/DistroMash/models"
+	"github.com/akakream/DistroMash/pkg/repository/crdt"
 	"github.com/akakream/DistroMash/pkg/repository/strategies"
 	"github.com/gofiber/fiber/v2"
 )
@@ -46,7 +47,7 @@ func GetStrategyList(c *fiber.Ctx) error {
 // @Success 200 {object} models.Strategy
 // @Router /api/v1/strategy/{key} [get]
 func GetStrategy(c *fiber.Ctx) error {
-	data, err := getCrdtValue(c.Params("key"))
+	data, err := crdt.GetCrdtValue(c.Params("key"))
 	// Return status 500 Internal Server Error.
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -127,7 +128,7 @@ func PostStrategy(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-	postCrdtKeyValue(byteStrategyKeyValue)
+	crdt.PostCrdtKeyValue(byteStrategyKeyValue)
 
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -193,7 +194,7 @@ func PutStrategy(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-	postCrdtKeyValue(byteStrategyKeyValue)
+	crdt.PostCrdtKeyValue(byteStrategyKeyValue)
 
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -218,7 +219,7 @@ func GetStrategyListUI(c *fiber.Ctx) error {
 }
 
 func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
-	data, err := getCrdtList()
+	data, err := crdt.GetCrdtList()
 	if err != nil {
         return nil, err
 	}

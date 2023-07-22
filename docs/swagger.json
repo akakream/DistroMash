@@ -191,6 +191,38 @@
                     }
                 }
             },
+            "put": {
+                "description": "Update the strategy.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "update the strategy",
+                "parameters": [
+                    {
+                        "description": "Put Strategy",
+                        "name": "strategy",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Strategy"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Strategy"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Post the strategy.",
                 "consumes": [
@@ -241,6 +273,36 @@
                     {
                         "type": "string",
                         "description": "Name of Strategy",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Strategy"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete the strategy.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Strategy"
+                ],
+                "summary": "delete the strategy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Delete Strategy",
                         "name": "name",
                         "in": "path",
                         "required": true

@@ -1,12 +1,13 @@
 package strategies
 
 import (
+	"encoding/json"
 	"math/rand"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/akakream/DistroMash/models"
+	"github.com/akakream/DistroMash/pkg/repository/crdt"
 	"github.com/akakream/DistroMash/pkg/repository/peer"
 )
 
@@ -23,7 +24,7 @@ func ProcessStrategyPercentage(strategy *models.Strategy) (string, string, error
     
     // Execute strategy if execute field is true
     if strategy.Execute {
-        executeStrategy(strategy, value)
+        executeStrategy(strategy, key, value)
     }
 
 	return key, value, nil
@@ -75,8 +76,38 @@ func randomNPercentOfPeers(peers []models.Peer, percentage float64, seed int64) 
 	return selected, nil
 }
 
-func executeStrategy(strategy *models.Strategy, peerValues string) error {
-    // peers := strings.Split(peerValues, ",")
-    time.Sleep(time.Second * 5)
+func executeStrategy(strategy *models.Strategy, key string, peerValues string) error {
+    peers :=strings.Split(peerValues, ",")
+
+    // Update every peer with the image
+    for _, peer := range peers {
+        var keyValue models.Crdt
+        currentValue, err := crdt.GetCrdtValue(key)
+        // It does not exist
+        if err != nil {
+            // Register 
+            keyValue = models.Crdt{
+                Key:   peer,
+                Value: strategy.Tag,
+            }
+        } else {
+            // Update
+            currentTags := strings.Split(currentValue.Value, ",")
+            updatedTagsArray := append(currentTags, strategy.Tag)
+            updatedTags := strings.Join(updatedTagsArray, ",")
+            keyValue = models.Crdt{
+                Key:   peer,
+                Value: updatedTags,
+            }
+        }
+
+        byteKeyValue, err := json.Marshal(keyValue)
+        if err != nil {
+            return err
+        }
+        crdt.PostCrdtKeyValue(byteKeyValue)
+    }
+    
     return nil
 }
+

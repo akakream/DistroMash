@@ -178,7 +178,48 @@ paths:
       summary: post the strategy
       tags:
       - Strategy
+    put:
+      consumes:
+      - application/json
+      description: Update the strategy.
+      parameters:
+      - description: Put Strategy
+        in: body
+        name: strategy
+        required: true
+        schema:
+          $ref: '#/definitions/models.Strategy'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Strategy'
+      summary: update the strategy
+      tags:
+      - Strategy
   /api/v1/strategy/{key}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the strategy.
+      parameters:
+      - description: Delete Strategy
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Strategy'
+      summary: delete the strategy
+      tags:
+      - Strategy
     get:
       consumes:
       - application/json
