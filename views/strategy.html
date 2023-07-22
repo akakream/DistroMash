@@ -1,10 +1,17 @@
 <h1>Strategies</h1>
 <ul>
   {{range .Strategy}}
-  <li class="strategy">
-      Type: {{.Type}}
-      Tag: {{.Tag}}
-      Percentage: {{.Percentage}}
+  <li>
+      <button class="strategy">
+          <b>Type:</b> {{.Type}}
+          <b>Tag:</b> {{.Tag}}
+          <b>Percentage:</b> {{.Percentage}}
+          {{if .Execute}}
+          <span style="color: green;">●</span>
+          {{else}}
+          <span style="color: gray;">●</span>
+          {{end}}
+      </button>
   </li>
   {{end}}
 </ul>

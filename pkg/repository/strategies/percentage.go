@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/akakream/DistroMash/models"
 	"github.com/akakream/DistroMash/pkg/repository/peer"
@@ -19,11 +20,23 @@ func ProcessStrategyPercentage(strategy *models.Strategy) (string, string, error
 	if err != nil {
 		return "", "", err
 	}
+    
+    // Execute strategy if execute field is true
+    if strategy.Execute {
+        executeStrategy(strategy, value)
+    }
+
 	return key, value, nil
 }
 
 func constructKey(strategy *models.Strategy) (string, error) {
-    key := strings.Join([]string{strategy.Type, strategy.Tag, strconv.Itoa(strategy.Percentage)}, "-")
+    var activationFlag string
+    if strategy.Execute {
+        activationFlag = "active"
+    } else {
+        activationFlag = "inactive"
+    }
+    key := strings.Join([]string{strategy.Type, strategy.Tag, strconv.Itoa(strategy.Percentage), activationFlag}, "-")
 	return key, nil
 }
 
@@ -60,4 +73,10 @@ func randomNPercentOfPeers(peers []models.Peer, percentage float64, seed int64) 
 	}
 
 	return selected, nil
+}
+
+func executeStrategy(strategy *models.Strategy, peerValues string) error {
+    // peers := strings.Split(peerValues, ",")
+    time.Sleep(time.Second * 5)
+    return nil
 }

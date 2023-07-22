@@ -2,7 +2,7 @@ package strategies
 
 const (
     StrategyPercentage = "percentage"
-    StrategySomethingelse = "lol"
+    StrategySomethingelse = "somethingelsestrategy"
 )
 
 func GetStrategyTypes() ([]string, error) {

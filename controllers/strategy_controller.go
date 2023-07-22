@@ -136,6 +136,72 @@ func PostStrategy(c *fiber.Ctx) error {
 	})
 }
 
+// PutStrategy updates the strategy.
+// @Description Update the strategy.
+// @Summary update the strategy
+// @Tags Strategy
+// @Accept json
+// @Produce json
+// @Param strategy body models.Strategy true "Put Strategy"
+// @Success 200 {object} models.Strategy
+// @Router /api/v1/strategy [put]
+func PutStrategy(c *fiber.Ctx) error {
+	var strategy models.Strategy
+	if err := json.Unmarshal(c.Body(), &strategy); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+    if err := checkInput(&strategy); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+    }
+
+	var key string
+	var value string
+	// TODO: DO THIS PART MAYBE IN GOROUTINE???
+	switch sType := strategy.Type; sType {
+	case strategies.StrategyPercentage:
+		k, v, err := strategies.ProcessStrategyPercentage(&strategy)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+		key = k
+		value = v
+	case strategies.StrategySomethingelse:
+		fmt.Println("StrategySomethingelse")
+	}
+
+	// Call crdt api and register the strategy
+	strategyKeyValue := models.Crdt{
+		Key:   key,
+		Value: value,
+	}
+    fmt.Printf("Key: %s Value: %s", key, value)
+
+	byteStrategyKeyValue, err := json.Marshal(strategyKeyValue)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+	postCrdtKeyValue(byteStrategyKeyValue)
+
+	// Return status 200 OK.
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"crdts": "fakedata",
+	})
+}
+
 func GetStrategyListUI(c *fiber.Ctx) error {
 	data, err := getStrategyList(c)
 	// Return status 500 Internal Server Error.
@@ -189,6 +255,12 @@ func parseStrategyFromKey(key string) (*models.Strategy, error) {
                 return nil, err
             }
             strategy.Percentage = percentage
+        } else if i == 3 {
+            if field == "active" {
+                strategy.Execute = true
+            } else if field == "inactive"{
+                strategy.Execute = false
+            }
         }
     }
     return &strategy, nil
@@ -204,8 +276,25 @@ func contains(slice []string, key string) bool {
 }
 
 func checkInput(strategy *models.Strategy) error {
-    if strategy.Percentage >= 100 || strategy.Percentage <= 0 {
+    if strategy.Percentage > 100 || strategy.Percentage < 0 {
         return errors.New("Percentage must be between 0 and 100")
     }
     return nil
+}
+
+// DeleteStrategy deletes the strategy.
+// @Description Delete the strategy.
+// @Summary delete the strategy
+// @Tags Strategy
+// @Accept json
+// @Produce json
+// @Param name path string true "Delete Strategy"
+// @Success 200 {object} models.Strategy
+// @Router /api/v1/strategy/{key} [delete]
+func DeleteStrategy(c *fiber.Ctx) error {
+	// Return status 200 OK.
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error":      false,
+		"strategy": "fake",
+	})
 }
