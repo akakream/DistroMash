@@ -82,7 +82,7 @@ func executeStrategy(strategy *models.Strategy, key string, peerValues string) e
     // Update every peer with the image
     for _, peer := range peers {
         var keyValue models.Crdt
-        currentValue, err := crdt.GetCrdtValue(key)
+        currentValue, err := crdt.GetCrdtValue(peer)
         // It does not exist
         if err != nil {
             // Register 
@@ -93,8 +93,10 @@ func executeStrategy(strategy *models.Strategy, key string, peerValues string) e
         } else {
             // Update
             currentTags := strings.Split(currentValue.Value, ",")
-            updatedTagsArray := append(currentTags, strategy.Tag)
-            updatedTags := strings.Join(updatedTagsArray, ",")
+            if tagDoesNotExist(strategy.Tag, currentTags) {
+                currentTags = append(currentTags, strategy.Tag)
+            }
+            updatedTags := strings.Join(currentTags, ",")
             keyValue = models.Crdt{
                 Key:   peer,
                 Value: updatedTags,
@@ -111,3 +113,11 @@ func executeStrategy(strategy *models.Strategy, key string, peerValues string) e
     return nil
 }
 
+func tagDoesNotExist(tag string, currentTags []string) bool {
+    for _, currentTag := range currentTags {
+        if tag == currentTag {
+            return false
+        }
+    }
+    return true
+}
