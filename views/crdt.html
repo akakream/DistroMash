@@ -1,6 +1,13 @@
 <h1>Crdt Datastore</h1>
-<ul>
-  {{range .Crdt}}
-  <li class="crdtPair"><b style="color: #FFB300;">{{.Key}}:</b> {{.Value}}</li>
-  {{end}}
-</ul>
+<div style="width: 100%; display: flex;">
+    <ul style="width: 100%;">
+      {{range .Crdt}}
+      <li style="width: 100%;" class="crdtPair">
+          <b style="color: #FFB300;">{{.Key}}:</b> 
+          <div style="max-width: 100%; 
+              word-wrap: break-word; 
+              overflow-wrap: break-word;">{{.Value}}</div>
+      </li>
+      {{end}}
+    </ul>
+</div>
