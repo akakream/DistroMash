@@ -1,15 +1,20 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
+	"log"
 
 	"github.com/akakream/DistroMash/models"
-	"github.com/akakream/DistroMash/pkg/utils"
+	"github.com/akakream/DistroMash/pkg/repository/crdt"
+	"github.com/akakream/DistroMash/pkg/repository/ipfs"
 	"github.com/gofiber/fiber/v2"
 )
+
+type jobResult struct {
+    Data string
+    Error error
+}
 
 // PostImage uploads a multi-platform docker image to ipfs and get the cid
 // @Description Upload a multi-platform docker image to ipfs and get the cid.
@@ -21,67 +26,47 @@ import (
 // @Success 200 {object} models.ImageWithCID
 // @Router /api/v1/image [post]
 func PostImage(c *fiber.Ctx) error {
-	resp, err := uploadImage2IPFS(c.Body())
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-	_ = resp
-
-	/*
-		// Add the cid to the CRDT key value store
-		crdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Name, Value: cidTagPair.Cid})
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
-		err = postCrdtKeyValue(crdtPayload)
-		// Return status 500 Internal Server Error.
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
-	*/
+    postResultChan := make(chan jobResult)
+    go logPostResult(postResultChan)
+    go asyncPostImage(postResultChan, c.Body())
 
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"error": false,
-		"msg":   "success",
+		"msg":   "Upload order is given and being processed.",
 	})
 }
 
-func uploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
-	url := fmt.Sprintf("http://%s/image", utils.Multiplatform2ipfsURL)
+func logPostResult(postResultChan <-chan jobResult) {
+    result := <-postResultChan
+    if result.Error != nil {
+        log.Println(result.Error)
+    } else {
+        log.Println(result.Data)
+    }
+}
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader(imageName))
+func asyncPostImage(postResultChan chan<- jobResult, imageTag []byte) {
+    var result jobResult
+
+	cidTagPair, err := ipfs.UploadImage2IPFS(imageTag)
 	if err != nil {
-		return nil, err
+        result.Error = err
 	}
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
+    
+    // Add the cid to the CRDT key value store
+    crdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Name, Value: cidTagPair.Cid})
+    if err != nil {
+        result.Error = err
+    }
+    err = crdt.PostCrdtKeyValue(crdtPayload)
+    if err != nil {
+        result.Error = err
+    }
 
-	// Check response
-	if resp.StatusCode != http.StatusOK {
-		apiErr, err := utils.GetErrorFromResponse(resp)
-		if err != nil {
-			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
-		}
-		return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
-	}
+    if result.Error == nil {
+        result.Data = fmt.Sprintf("Image Name: %s CID: %s", cidTagPair.Name, cidTagPair.Cid)
+    }
 
-	var data models.ImageWithCID
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return nil, err
-	}
-
-	return &data, nil
+    postResultChan <- result
 }

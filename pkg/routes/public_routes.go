@@ -15,10 +15,6 @@ func PublicRoutes(app *fiber.App) {
 	v1.Put("/strategy", controllers.PutStrategy)
 	v1.Delete("/strategy/:key", controllers.DeleteStrategy)
 
-	v1.Get("/dig/:tag", func(c *fiber.Ctx) error {
-		return c.SendString(c.Params("tag"))
-	})
-
 	v1.Get("/crdt", controllers.GetCrdtList)
 	v1.Get("/crdt/:key", controllers.GetCrdtValue)
 	v1.Post("/crdt", controllers.PostCrdtValue)

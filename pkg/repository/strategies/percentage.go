@@ -2,13 +2,16 @@ package strategies
 
 import (
 	"encoding/json"
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
 
 	"github.com/akakream/DistroMash/models"
 	"github.com/akakream/DistroMash/pkg/repository/crdt"
+	"github.com/akakream/DistroMash/pkg/repository/ipfs"
 	"github.com/akakream/DistroMash/pkg/repository/peer"
+	cid "github.com/ipfs/go-cid"
 )
 
 func ProcessStrategyPercentage(strategy *models.Strategy) (string, string, error) {
@@ -78,37 +81,9 @@ func randomNPercentOfPeers(peers []models.Peer, percentage float64, seed int64) 
 
 func executeStrategy(strategy *models.Strategy, key string, peerValues string) error {
     peers :=strings.Split(peerValues, ",")
-
-    // Update every peer with the image
-    for _, peer := range peers {
-        var keyValue models.Crdt
-        currentValue, err := crdt.GetCrdtValue(peer)
-        // It does not exist
-        if err != nil {
-            // Register 
-            keyValue = models.Crdt{
-                Key:   peer,
-                Value: strategy.Tag,
-            }
-        } else {
-            // Update
-            currentTags := strings.Split(currentValue.Value, ",")
-            if tagDoesNotExist(strategy.Tag, currentTags) {
-                currentTags = append(currentTags, strategy.Tag)
-            }
-            updatedTags := strings.Join(currentTags, ",")
-            keyValue = models.Crdt{
-                Key:   peer,
-                Value: updatedTags,
-            }
-        }
-
-        byteKeyValue, err := json.Marshal(keyValue)
-        if err != nil {
-            return err
-        }
-        crdt.PostCrdtKeyValue(byteKeyValue)
-    }
+    tagToCidChan := make(chan string)
+    go resolveTagToCID(strategy.Tag, tagToCidChan)
+    go updatePeers(peers, tagToCidChan)
     
     return nil
 }
@@ -120,4 +95,79 @@ func tagDoesNotExist(tag string, currentTags []string) bool {
         }
     }
     return true
+}
+
+func resolveTagToCID(tag string, tagToCidChan chan<- string) {
+    // Check if the tag is already CID
+    c := tag
+    _, err := cid.Decode(tag)
+    if err != nil {
+        log.Println("Not a CID!")
+        val, err := getFromCRDTstore(tag)
+        if err != nil {
+            log.Println(err)
+        } else {
+            c = val
+        }
+    }
+
+    tagToCidChan <- c
+}
+
+func getFromCRDTstore(tag string) (string, error) {
+    // Check if an entry for the tag in the CRDT Store exists
+    crdtEntry, err := crdt.GetCrdtValue(tag)
+    if err != nil {
+        log.Println("The tag-cid mapping does not exist")
+        // Download the docker image and push to crdt
+        payload := models.Image{
+            Name: tag,
+        }
+        payloadBytes, err := json.Marshal(payload)
+        if err != nil {
+            return "", err
+        }
+        imageWithCid, err := ipfs.UploadImage2IPFS(payloadBytes)
+        if err != nil {
+            return "", err
+        }
+        return imageWithCid.Cid, nil
+    }
+
+    return crdtEntry.Value, nil
+}
+
+func updatePeers(peers []string, tagToCidChan <-chan string) {
+    cidTag := <-tagToCidChan
+
+    // Update every peer with the image
+    for _, peer := range peers {
+        var keyValue models.Crdt
+        currentValue, err := crdt.GetCrdtValue(peer)
+        // It does not exist
+        if err != nil {
+            // Register 
+            keyValue = models.Crdt{
+                Key:   peer,
+                Value: cidTag,
+            }
+        } else {
+            // Update
+            currentTags := strings.Split(currentValue.Value, ",")
+            if tagDoesNotExist(cidTag, currentTags) {
+                currentTags = append(currentTags, cidTag)
+                updatedTags := strings.Join(currentTags, ",")
+                keyValue = models.Crdt{
+                    Key:   peer,
+                    Value: updatedTags,
+                }
+            } else {
+                // If key exists, do not update
+                continue
+            }
+        }
+
+        byteKeyValue, err := json.Marshal(keyValue)
+        crdt.PostCrdtKeyValue(byteKeyValue)
+    }
 }
