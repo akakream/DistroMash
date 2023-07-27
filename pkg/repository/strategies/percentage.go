@@ -127,11 +127,13 @@ func getFromCRDTstore(tag string) (string, error) {
         if err != nil {
             return "", err
         }
-        imageWithCid, err := ipfs.UploadImage2IPFS(payloadBytes)
-        if err != nil {
-            return "", err
+        postResultChan := make(chan ipfs.JobResult)
+        go ipfs.AsyncPostImage(postResultChan, payloadBytes)
+        result := <-postResultChan
+        if result.Error != nil {
+            return "", result.Error
         }
-        return imageWithCid.Cid, nil
+        return result.Data.Cid, nil
     }
 
     return crdtEntry.Value, nil

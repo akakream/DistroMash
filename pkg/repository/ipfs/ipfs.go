@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/akakream/DistroMash/models"
+	"github.com/akakream/DistroMash/pkg/repository/crdt"
 	"github.com/akakream/DistroMash/pkg/utils"
 )
 
@@ -38,4 +40,46 @@ func UploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
 	}
 
 	return &data, nil
+}
+
+type JobResult struct {
+    Data models.ImageWithCID
+    Error error
+}
+
+func LogPostResult(postResultChan <-chan JobResult) {
+    result := <-postResultChan
+    if result.Error != nil {
+        log.Println(result.Error)
+    } else {
+        log.Println(result.Data)
+    }
+}
+
+func AsyncPostImage(postResultChan chan<- JobResult, imageTag []byte) {
+    var result JobResult
+
+	cidTagPair, err := UploadImage2IPFS(imageTag)
+	if err != nil {
+        result.Error = err
+	}
+    
+    // Add the cid to the CRDT key value store
+    crdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Name, Value: cidTagPair.Cid})
+    if err != nil {
+        result.Error = err
+    }
+    err = crdt.PostCrdtKeyValue(crdtPayload)
+    if err != nil {
+        result.Error = err
+    }
+
+    if result.Error == nil {
+        result.Data = models.ImageWithCID{
+            Name: cidTagPair.Name,
+            Cid: cidTagPair.Cid,
+        }
+    }
+
+    postResultChan <- result
 }
