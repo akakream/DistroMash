@@ -74,6 +74,16 @@ func AsyncPostImage(postResultChan chan<- JobResult, imageTag []byte) {
         result.Error = err
     }
 
+    // Add the reverse lookup
+    reverseCrdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Cid, Value: cidTagPair.Name})
+    if err != nil {
+        result.Error = err
+    }
+    err = crdt.PostCrdtKeyValue(reverseCrdtPayload)
+    if err != nil {
+        result.Error = err
+    }
+
     if result.Error == nil {
         result.Data = models.ImageWithCID{
             Name: cidTagPair.Name,

@@ -123,3 +123,39 @@ func DeleteCrdtValue(c *fiber.Ctx) error {
 		"msg":   "success",
 	})
 }
+
+// PurgeDatastore purges datastore.
+// @Description Purge datastore.
+// @Summary purge datastore
+// @Tags Crdt
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Crdt
+// @Router /api/v1/crdt [delete]
+func PurgeDatastore(c *fiber.Ctx) error {
+	data, err := crdt.GetCrdtList()
+	// Return status 500 Internal Server Error.
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+    for _, d := range data {
+        err := crdt.DeleteCrdtKeyValue(d.Key)
+        // Return status 500 Internal Server Error.
+        if err != nil {
+            return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+                "error": true,
+                "msg":   err.Error(),
+            })
+        }
+    }
+
+	// Return status 200 OK.
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"msg":   "success",
+	})
+}

@@ -34,13 +34,24 @@ func ProcessStrategyPercentage(strategy *models.Strategy) (string, string, error
 }
 
 func constructKey(strategy *models.Strategy) (string, error) {
+    tag := strategy.Tag
+    // Reverse Lookup if CID instead of tag
+    _, err := cid.Decode(strategy.Tag)
+    if err == nil {
+        crdtEntry, err := crdt.GetCrdtValue(strategy.Tag)
+        if err != nil {
+            log.Println("THE CID IS UNKNOWN!!!")
+        }
+        tag = crdtEntry.Value
+    }
+
     var activationFlag string
     if strategy.Execute {
         activationFlag = "active"
     } else {
         activationFlag = "inactive"
     }
-    key := strings.Join([]string{strategy.Type, strategy.Tag, strconv.Itoa(strategy.Percentage), activationFlag}, "-")
+    key := strings.Join([]string{strategy.Type, tag, strconv.Itoa(strategy.Percentage), activationFlag}, "-")
 	return key, nil
 }
 
@@ -103,7 +114,7 @@ func resolveTagToCID(tag string, tagToCidChan chan<- string) {
     _, err := cid.Decode(tag)
     if err != nil {
         log.Println("Not a CID!")
-        val, err := getFromCRDTstore(tag)
+        val, err := getIfPresentOrPostCRDTstore(tag)
         if err != nil {
             log.Println(err)
         } else {
@@ -114,7 +125,7 @@ func resolveTagToCID(tag string, tagToCidChan chan<- string) {
     tagToCidChan <- c
 }
 
-func getFromCRDTstore(tag string) (string, error) {
+func getIfPresentOrPostCRDTstore(tag string) (string, error) {
     // Check if an entry for the tag in the CRDT Store exists
     crdtEntry, err := crdt.GetCrdtValue(tag)
     if err != nil {

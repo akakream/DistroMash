@@ -76,6 +76,27 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Purge datastore.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crdt"
+                ],
+                "summary": "purge datastore",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crdt"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/crdt/{key}": {

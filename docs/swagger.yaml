@@ -40,6 +40,20 @@ info:
   version: "1.0"
 paths:
   /api/v1/crdt:
+    delete:
+      consumes:
+      - application/json
+      description: Purge datastore.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Crdt'
+      summary: purge datastore
+      tags:
+      - Crdt
     get:
       consumes:
       - application/json
