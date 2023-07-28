@@ -18,13 +18,15 @@ definitions:
       name:
         type: string
     type: object
-  models.Strategy:
+  models.StrategyPayload:
     properties:
       execute:
         type: boolean
       percentage:
         type: integer
       tag:
+        type: string
+      target:
         type: string
       type:
         type: string
@@ -166,7 +168,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Strategy'
+              $ref: '#/definitions/models.StrategyPayload'
             type: array
       summary: get all strategies
       tags:
@@ -181,14 +183,14 @@ paths:
         name: strategy
         required: true
         schema:
-          $ref: '#/definitions/models.Strategy'
+          $ref: '#/definitions/models.StrategyPayload'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Strategy'
+            $ref: '#/definitions/models.StrategyPayload'
       summary: post the strategy
       tags:
       - Strategy
@@ -201,15 +203,14 @@ paths:
         in: body
         name: strategy
         required: true
-        schema:
-          $ref: '#/definitions/models.Strategy'
+        schema: {}
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Strategy'
+            $ref: '#/definitions/models.StrategyPayload'
       summary: update the strategy
       tags:
       - Strategy
@@ -230,7 +231,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Strategy'
+            $ref: '#/definitions/models.StrategyPayload'
       summary: delete the strategy
       tags:
       - Strategy
@@ -250,7 +251,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Strategy'
+            $ref: '#/definitions/models.StrategyPayload'
       summary: get the strategy
       tags:
       - Strategy

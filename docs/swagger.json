@@ -206,7 +206,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Strategy"
+                                "$ref": "#/definitions/models.StrategyPayload"
                             }
                         }
                     }
@@ -230,16 +230,14 @@
                         "name": "strategy",
                         "in": "body",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Strategy"
-                        }
+                        "schema": {}
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -263,7 +261,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 ],
@@ -271,7 +269,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -303,7 +301,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -333,7 +331,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -371,7 +369,7 @@
                 }
             }
         },
-        "models.Strategy": {
+        "models.StrategyPayload": {
             "type": "object",
             "properties": {
                 "execute": {
@@ -381,6 +379,9 @@
                     "type": "integer"
                 },
                 "tag": {
+                    "type": "string"
+                },
+                "target": {
                     "type": "string"
                 },
                 "type": {

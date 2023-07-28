@@ -214,7 +214,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Strategy"
+                                "$ref": "#/definitions/models.StrategyPayload"
                             }
                         }
                     }
@@ -238,16 +238,14 @@ const docTemplate = `{
                         "name": "strategy",
                         "in": "body",
                         "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Strategy"
-                        }
+                        "schema": {}
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -271,7 +269,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 ],
@@ -279,7 +277,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -311,7 +309,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -341,7 +339,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Strategy"
+                            "$ref": "#/definitions/models.StrategyPayload"
                         }
                     }
                 }
@@ -379,7 +377,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Strategy": {
+        "models.StrategyPayload": {
             "type": "object",
             "properties": {
                 "execute": {
@@ -389,6 +387,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "tag": {
+                    "type": "string"
+                },
+                "target": {
                     "type": "string"
                 },
                 "type": {

@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/akakream/DistroMash/pkg/repository/ipfs"
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/akakream/DistroMash/pkg/repository/ipfs"
 )
 
 // PostImage uploads a multi-platform docker image to ipfs and get the cid
@@ -15,9 +16,9 @@ import (
 // @Success 200 {object} models.ImageWithCID
 // @Router /api/v1/image [post]
 func PostImage(c *fiber.Ctx) error {
-    postResultChan := make(chan ipfs.JobResult)
-    go ipfs.LogPostResult(postResultChan)
-    go ipfs.AsyncPostImage(postResultChan, c.Body())
+	postResultChan := make(chan ipfs.JobResult)
+	go ipfs.LogPostResult(postResultChan)
+	go ipfs.AsyncPostImage(postResultChan, c.Body())
 
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

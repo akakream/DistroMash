@@ -7,10 +7,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/akakream/DistroMash/models"
 	"github.com/akakream/DistroMash/pkg/repository/crdt"
 	"github.com/akakream/DistroMash/pkg/repository/strategies"
-	"github.com/gofiber/fiber/v2"
 )
 
 // GetStrategyList gets the whole strategies.
@@ -19,7 +20,7 @@ import (
 // @Tags Strategy
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Strategy
+// @Success 200 {array} models.StrategyPayload
 // @Router /api/v1/strategy [get]
 func GetStrategyList(c *fiber.Ctx) error {
 	data, err := getStrategyList(c)
@@ -44,7 +45,7 @@ func GetStrategyList(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param name path string true "Name of Strategy"
-// @Success 200 {object} models.Strategy
+// @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy/{key} [get]
 func GetStrategy(c *fiber.Ctx) error {
 	data, err := crdt.GetCrdtValue(c.Params("key"))
@@ -77,43 +78,73 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Tags Strategy
 // @Accept json
 // @Produce json
-// @Param strategy body models.Strategy true "Post Strategy"
-// @Success 200 {object} models.Strategy
+// @Param strategy body models.StrategyPayload true "Post Strategy"
+// @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy [post]
 func PostStrategy(c *fiber.Ctx) error {
-	var strategy models.Strategy
-	if err := json.Unmarshal(c.Body(), &strategy); err != nil {
+	var strategyPayload models.StrategyPayload
+	if err := json.Unmarshal(c.Body(), &strategyPayload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
 
-	if err := checkInput(&strategy); err != nil {
+	if err := checkInput(&strategyPayload); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
+
+	var strategy models.Strategy
 
 	var key string
 	var value string
 	// TODO: DO THIS PART MAYBE IN GOROUTINE???
-	switch sType := strategy.Type; sType {
-	case strategies.StrategyPercentage:
-		k, v, err := strategies.ProcessStrategyPercentage(&strategy)
-		if err != nil {
+	switch sType := strategyPayload.Type; sType {
+	case strategies.StrategyPercentageType:
+		var s strategies.StrategyPercentage
+		if err := json.Unmarshal(c.Body(), &s); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": true,
 				"msg":   err.Error(),
 			})
 		}
-		key = k
-		value = v
-	case strategies.StrategySomethingelse:
-		fmt.Println("StrategySomethingelse")
+		strategy = &s
+	case strategies.StrategyTargetType:
+		var s strategies.StrategyTarget
+		if err := json.Unmarshal(c.Body(), &s); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+		strategy = &s
 	}
 
+	key, value, err := strategy.Process()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	if err := registerStrategyToCRDT(key, value); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+	// Return status 200 OK.
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"crdts": "fakedata",
+	})
+}
+
+func registerStrategyToCRDT(key string, value string) error {
 	// Call crdt api and register the strategy
 	strategyKeyValue := models.Crdt{
 		Key:   key,
@@ -123,18 +154,10 @@ func PostStrategy(c *fiber.Ctx) error {
 
 	byteStrategyKeyValue, err := json.Marshal(strategyKeyValue)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
+		return err
 	}
 	crdt.PostCrdtKeyValue(byteStrategyKeyValue)
-
-	// Return status 200 OK.
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"error": false,
-		"crdts": "fakedata",
-	})
+	return nil
 }
 
 // PutStrategy updates the strategy.
@@ -144,62 +167,13 @@ func PostStrategy(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param strategy body models.Strategy true "Put Strategy"
-// @Success 200 {object} models.Strategy
+// @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy [put]
 func PutStrategy(c *fiber.Ctx) error {
-	var strategy models.Strategy
-	if err := json.Unmarshal(c.Body(), &strategy); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-
-	if err := checkInput(&strategy); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-
-	var key string
-	var value string
-	// TODO: DO THIS PART MAYBE IN GOROUTINE???
-	switch sType := strategy.Type; sType {
-	case strategies.StrategyPercentage:
-		k, v, err := strategies.ProcessStrategyPercentage(&strategy)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
-		key = k
-		value = v
-	case strategies.StrategySomethingelse:
-		fmt.Println("StrategySomethingelse")
-	}
-
-	// Call crdt api and register the strategy
-	strategyKeyValue := models.Crdt{
-		Key:   key,
-		Value: value,
-	}
-	fmt.Printf("Key: %s Value: %s", key, value)
-
-	byteStrategyKeyValue, err := json.Marshal(strategyKeyValue)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-	crdt.PostCrdtKeyValue(byteStrategyKeyValue)
-
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"error": false,
-		"crdts": "fakedata",
+		"error": true,
+		"crdts": "NOT IMPLEMENTED",
 	})
 }
 
@@ -218,7 +192,7 @@ func GetStrategyListUI(c *fiber.Ctx) error {
 	}, "base")
 }
 
-func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
+func getStrategyList(c *fiber.Ctx) ([]models.StrategyPayload, error) {
 	data, err := crdt.GetCrdtList()
 	if err != nil {
 		return nil, err
@@ -228,7 +202,7 @@ func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
 		return nil, err
 	}
 
-	var existingStrategies []models.Strategy
+	var existingStrategies []models.StrategyPayload
 	for _, pair := range data {
 		strategy, err := parseStrategyFromKey(pair.Key)
 		if err != nil {
@@ -242,9 +216,9 @@ func getStrategyList(c *fiber.Ctx) ([]models.Strategy, error) {
 	return existingStrategies, nil
 }
 
-func parseStrategyFromKey(key string) (*models.Strategy, error) {
+func parseStrategyFromKey(key string) (*models.StrategyPayload, error) {
 	keyFields := strings.Split(key, "-")
-	var strategy models.Strategy
+	var strategy models.StrategyPayload
 	for i, field := range keyFields {
 		if i == 0 {
 			strategy.Type = field
@@ -276,7 +250,8 @@ func contains(slice []string, key string) bool {
 	return false
 }
 
-func checkInput(strategy *models.Strategy) error {
+func checkInput(strategy *models.StrategyPayload) error {
+	// TODO: ADD HERE OTHER RULES
 	if strategy.Percentage > 100 || strategy.Percentage < 0 {
 		return errors.New("Percentage must be between 0 and 100")
 	}
@@ -290,7 +265,7 @@ func checkInput(strategy *models.Strategy) error {
 // @Accept json
 // @Produce json
 // @Param name path string true "Delete Strategy"
-// @Success 200 {object} models.Strategy
+// @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy/{key} [delete]
 func DeleteStrategy(c *fiber.Ctx) error {
 	// Return status 200 OK.
