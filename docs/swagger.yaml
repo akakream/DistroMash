@@ -240,9 +240,9 @@ paths:
       - application/json
       description: Get the strategy.
       parameters:
-      - description: Name of Strategy
+      - description: Key of Strategy
         in: path
-        name: name
+        name: key
         required: true
         type: string
       produces:

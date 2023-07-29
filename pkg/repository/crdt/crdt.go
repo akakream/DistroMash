@@ -27,9 +27,17 @@ func PostCrdtKeyValue(keyValuePair []byte) error {
 	if resp.StatusCode != http.StatusOK {
 		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
-			return fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+			return fmt.Errorf(
+				"Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s",
+				resp.StatusCode,
+				err.Error(),
+			)
 		}
-		return fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+		return fmt.Errorf(
+			"Non-OK HTTP status from the api with status code %d: %s",
+			resp.StatusCode,
+			apiErr,
+		)
 	}
 
 	var data models.Crdt
@@ -56,9 +64,17 @@ func GetCrdtValue(key string) (*models.Crdt, error) {
 	if resp.StatusCode != http.StatusOK {
 		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
-			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+			return nil, fmt.Errorf(
+				"Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s",
+				resp.StatusCode,
+				err.Error(),
+			)
 		}
-		return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+		return nil, fmt.Errorf(
+			"Non-OK HTTP status from the api with status code %d: %s",
+			resp.StatusCode,
+			apiErr,
+		)
 	}
 
 	var data models.Crdt
@@ -84,9 +100,17 @@ func GetCrdtList() ([]models.Crdt, error) {
 	if resp.StatusCode != http.StatusOK {
 		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
-			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+			return nil, fmt.Errorf(
+				"Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s",
+				resp.StatusCode,
+				err.Error(),
+			)
 		}
-		return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+		return nil, fmt.Errorf(
+			"Non-OK HTTP status from the api with status code %d: %s",
+			resp.StatusCode,
+			apiErr,
+		)
 	}
 
 	var data []models.Crdt
@@ -96,7 +120,6 @@ func GetCrdtList() ([]models.Crdt, error) {
 
 	return data, nil
 }
-
 
 func DeleteCrdtKeyValue(key string) error {
 	url := fmt.Sprintf("http://%s/crdt/%s", utils.Libp2pURL, key)
@@ -115,9 +138,17 @@ func DeleteCrdtKeyValue(key string) error {
 	if resp.StatusCode != http.StatusOK {
 		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
-			return fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+			return fmt.Errorf(
+				"Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s",
+				resp.StatusCode,
+				err.Error(),
+			)
 		}
-		return fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+		return fmt.Errorf(
+			"Non-OK HTTP status from the api with status code %d: %s",
+			resp.StatusCode,
+			apiErr,
+		)
 	}
 
 	return nil

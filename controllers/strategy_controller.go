@@ -44,7 +44,7 @@ func GetStrategyList(c *fiber.Ctx) error {
 // @Tags Strategy
 // @Accept json
 // @Produce json
-// @Param name path string true "Name of Strategy"
+// @Param key path string true "Key of Strategy"
 // @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy/{key} [get]
 func GetStrategy(c *fiber.Ctx) error {
@@ -56,8 +56,15 @@ func GetStrategy(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
+	stypes, err := strategies.GetStrategyTypes()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
 
-	strategy, err := parseStrategyFromKey(data.Key)
+	strategy, err := parseStrategyFromKey(data.Key, stypes)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -204,32 +211,38 @@ func getStrategyList(c *fiber.Ctx) ([]models.StrategyPayload, error) {
 
 	var existingStrategies []models.StrategyPayload
 	for _, pair := range data {
-		strategy, err := parseStrategyFromKey(pair.Key)
+		strategy, err := parseStrategyFromKey(pair.Key, stypes)
 		if err != nil {
 			continue
 		}
-		if contains(stypes, strategy.Type) {
-			existingStrategies = append(existingStrategies, *strategy)
-		}
+		existingStrategies = append(existingStrategies, *strategy)
 	}
 
 	return existingStrategies, nil
 }
 
-func parseStrategyFromKey(key string) (*models.StrategyPayload, error) {
+func parseStrategyFromKey(key string, stypes []string) (*models.StrategyPayload, error) {
 	keyFields := strings.Split(key, "-")
 	var strategy models.StrategyPayload
+
+	// Check if strategy
+	if !contains(stypes, keyFields[0]) {
+		return nil, errors.New("not a strategy")
+	}
+
 	for i, field := range keyFields {
 		if i == 0 {
 			strategy.Type = field
 		} else if i == 1 {
 			strategy.Tag = field
-		} else if i == 2 {
+		} else if i == 2 && keyFields[0] == "percentage" {
 			percentage, err := strconv.Atoi(field)
 			if err != nil {
 				return nil, err
 			}
 			strategy.Percentage = percentage
+		} else if i == 2 && keyFields[0] == "target" {
+			strategy.Target = field
 		} else if i == 3 {
 			if field == "active" {
 				strategy.Execute = true

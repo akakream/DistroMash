@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/akakream/DistroMash/controllers"
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/akakream/DistroMash/controllers"
 )
 
 func PublicRoutes(app *fiber.App) {
@@ -19,7 +20,7 @@ func PublicRoutes(app *fiber.App) {
 	v1.Get("/crdt/:key", controllers.GetCrdtValue)
 	v1.Post("/crdt", controllers.PostCrdtValue)
 	v1.Delete("/crdt/:key", controllers.DeleteCrdtValue)
-    v1.Delete("/crdt", controllers.PurgeDatastore)
+	v1.Delete("/crdt", controllers.PurgeDatastore)
 
 	v1.Post("/image", controllers.PostImage)
 }

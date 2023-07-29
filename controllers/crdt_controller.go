@@ -142,16 +142,16 @@ func PurgeDatastore(c *fiber.Ctx) error {
 		})
 	}
 
-    for _, d := range data {
-        err := crdt.DeleteCrdtKeyValue(d.Key)
-        // Return status 500 Internal Server Error.
-        if err != nil {
-            return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-                "error": true,
-                "msg":   err.Error(),
-            })
-        }
-    }
+	for _, d := range data {
+		err := crdt.DeleteCrdtKeyValue(d.Key)
+		// Return status 500 Internal Server Error.
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+	}
 
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

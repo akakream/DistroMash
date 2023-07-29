@@ -299,8 +299,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Name of Strategy",
-                        "name": "name",
+                        "description": "Key of Strategy",
+                        "name": "key",
                         "in": "path",
                         "required": true
                     }
