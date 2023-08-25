@@ -1,0 +1,6 @@
+[submodule "ipfs-libp2p-pubsub"]
+	path = ipfs-libp2p-pubsub
+	url = git@github.com:akakream/ipfs-libp2p-pubsub.git
+[submodule "MultiPlatform2IPFS"]
+	path = MultiPlatform2IPFS
+	url = git@github.com:akakream/MultiPlatform2IPFS.git
