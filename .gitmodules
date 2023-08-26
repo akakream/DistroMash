@@ -4,3 +4,6 @@
 [submodule "MultiPlatform2IPFS"]
 	path = MultiPlatform2IPFS
 	url = git@github.com:akakream/MultiPlatform2IPFS.git
+[submodule "ipdr2"]
+	path = ipdr2
+	url = git@github.com:akakream/ipdr2.git
