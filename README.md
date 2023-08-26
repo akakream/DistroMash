@@ -9,7 +9,7 @@ DistroMash meshes your docker image distribution.
 ## Install
 
 - `git submodule init && git submodule update`
-- go version 1.20.5 or above: [https://go.dev/doc/install](https://go.dev/doc/install)
+- go version 1.20.5: [https://go.dev/doc/install](https://go.dev/doc/install)
 - IPFS Kubo 0.20.0 or above [https://docs.ipfs.tech/install/command-line/#system-requirements](https://docs.ipfs.tech/install/command-line/#system-requirements)
 
 ## Build
@@ -35,6 +35,14 @@ DistroMash meshes your docker image distribution.
       ```bash
       sudo systemd-resolve --flush-caches
       ```
+
+## Bootstrap
+
+- Choose a node or nodes from your cluster and boostrap it.
+  - DistroMash uses a file for bootstrapping: `data/peerstore`.
+  - There is a `data/peerstore.template` file showing how the bootstrap entry look like.
+  - Copy `data/peerstore.template` file to `data/peerstore`.
+  - Add the multi-address of the bootstrap node to every node's `data/peerstore`.
 
 ## Run
 
