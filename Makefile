@@ -13,7 +13,7 @@ multiplatform2ipfs-build:
 
 p2pcomm-build:
 	@echo "Building P2PComm"
-	@cd ipfs-libp2p-pubsub && go build -o ./bin/app 
+	@cd P2PComm && go build -o ./bin/app 
 
 controller-build:
 	@echo "Building Controller"
@@ -29,7 +29,7 @@ multiplatform2ipfs-run:
 
 p2pcomm-run:
 	@echo "Running P2PComm"
-	@cd ipfs-libp2p-pubsub && ./bin/app server --port=3001 --datastore & 
+	@cd P2PComm && ./bin/app server --port=3001 --datastore & 
 
 controller-run:
 	@echo "Running Controller"

@@ -1,9 +1,9 @@
-[submodule "ipfs-libp2p-pubsub"]
-	path = ipfs-libp2p-pubsub
-	url = git@github.com:akakream/ipfs-libp2p-pubsub.git
 [submodule "MultiPlatform2IPFS"]
 	path = MultiPlatform2IPFS
 	url = git@github.com:akakream/MultiPlatform2IPFS.git
 [submodule "ipdr2"]
 	path = ipdr2
 	url = git@github.com:akakream/ipdr2.git
+[submodule "P2PComm"]
+	path = P2PComm
+	url = git@github.com:akakream/P2PComm.git
