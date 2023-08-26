@@ -6,6 +6,12 @@ DistroMash meshes your docker image distribution.
 - Runs as a sidecar to IPFS daemon
 - Leverages IPDR as docker registry to communicate with IPFS as image storage.
 
+## Install
+
+- `git submodule init && git submodule update`
+- go version 1.20.5 or above: [https://go.dev/doc/install](https://go.dev/doc/install)
+- IPFS Kubo 0.20.0 or above [https://docs.ipfs.tech/install/command-line/#system-requirements](https://docs.ipfs.tech/install/command-line/#system-requirements)
+
 ## Build
 
 - Build the micro-services with `make build-all`
@@ -32,5 +38,5 @@ DistroMash meshes your docker image distribution.
 
 ## Run
 
-- Start ipfs daemon (installation instrcutions)
+- Start ipfs daemon with `ipfs daemon`
 - Run DistroMash with `make run-all`
