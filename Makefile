@@ -6,6 +6,8 @@ BUILD_DIR = $(PWD)/bin
 build-all: multiplatform2ipfs-build p2pcomm-build ipdr2-build controller-build
 
 run-all: multiplatform2ipfs-run p2pcomm-run ipdr2-run controller-run
+	trap 'kill $(jobs -p)' SIGINT; \
+	wait $(jobs -p)
 
 multiplatform2ipfs-build:
 	@echo "Building MultiPlatform2IPFS"

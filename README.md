@@ -39,6 +39,8 @@ DistroMash meshes your docker image distribution.
 ## Bootstrap
 
 - Choose a node or nodes from your cluster and boostrap it.
+  - Run that node as shown below to create a multi-address for it.
+  - The multi-address will be printed to standard output. Grab it and continue below.
   - DistroMash uses a file for bootstrapping: `data/peerstore`.
   - There is a `P2PComm/data/peerstore.template` file showing how the bootstrap entry look like.
   - Copy the `P2PComm/peerstore.template` file to `P2PComm/data/peerstore`.
