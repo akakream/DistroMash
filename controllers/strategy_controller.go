@@ -151,7 +151,21 @@ func PostStrategy(c *fiber.Ctx) error {
 	})
 }
 
+func deleteInactiveStrategyIfExists(key string) error {
+	keySplit := strings.Split(key, "-")
+	activationOrder := (keySplit[len(keySplit)-1] == "active")
+	keySplit[len(keySplit)-1] = "inactive"
+	if activationOrder {
+		crdt.DeleteCrdtKeyValue(strings.Join(keySplit, "-"))
+	}
+	return nil
+}
+
 func registerStrategyToCRDT(key string, value string) error {
+	err := deleteInactiveStrategyIfExists(key)
+	if err != nil {
+		return err
+	}
 	// Call crdt api and register the strategy
 	strategyKeyValue := models.Crdt{
 		Key:   key,
@@ -219,6 +233,24 @@ func getStrategyList(c *fiber.Ctx) ([]models.StrategyPayload, error) {
 	}
 
 	return existingStrategies, nil
+}
+
+func parseKeyFromStrategyPayload(strategy *models.StrategyPayload) (string, error) {
+	var target string
+	var activity string
+	if strategy.Type == "percentage" {
+		target = strconv.Itoa(strategy.Percentage)
+	} else {
+		target = strategy.Target
+	}
+	if strategy.Execute {
+		activity = "active"
+	} else {
+		activity = "inactive"
+	}
+	fields := []string{strategy.Type, strategy.Tag, target, activity}
+	key := strings.Join(fields, "-")
+	return key, nil
 }
 
 func parseStrategyFromKey(key string, stypes []string) (*models.StrategyPayload, error) {

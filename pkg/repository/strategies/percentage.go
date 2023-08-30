@@ -1,6 +1,7 @@
 package strategies
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"strconv"
@@ -48,6 +49,9 @@ func (strategy *StrategyPercentage) constructKey() (string, error) {
 		crdtEntry, err := crdt.GetCrdtValue(strategy.Tag)
 		if err != nil {
 			log.Println("THE CID IS UNKNOWN!!!")
+			return "", errors.New(
+				"The following CID is unknown. Please provide a known CID or a Docker image tag.",
+			)
 		}
 		tag = crdtEntry.Value
 	}
