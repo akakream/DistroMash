@@ -29,9 +29,17 @@ func UploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
 	if resp.StatusCode != http.StatusOK {
 		apiErr, err := utils.GetErrorFromResponse(resp)
 		if err != nil {
-			return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s", resp.StatusCode, err.Error())
+			return nil, fmt.Errorf(
+				"Non-OK HTTP status from the api with status code %d: Error when reading erorr message: %s",
+				resp.StatusCode,
+				err.Error(),
+			)
 		}
-		return nil, fmt.Errorf("Non-OK HTTP status from the api with status code %d: %s", resp.StatusCode, apiErr)
+		return nil, fmt.Errorf(
+			"Non-OK HTTP status from the api with status code %d: %s",
+			resp.StatusCode,
+			apiErr,
+		)
 	}
 
 	var data models.ImageWithCID
@@ -43,53 +51,57 @@ func UploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
 }
 
 type JobResult struct {
-    Data models.ImageWithCID
-    Error error
+	Data  models.ImageWithCID
+	Error error
 }
 
 func LogPostResult(postResultChan <-chan JobResult) {
-    result := <-postResultChan
-    if result.Error != nil {
-        log.Println(result.Error)
-    } else {
-        log.Println(result.Data)
-    }
+	result := <-postResultChan
+	if result.Error != nil {
+		log.Println(result.Error)
+	} else {
+		log.Println(result.Data)
+	}
 }
 
-func AsyncPostImage(postResultChan chan<- JobResult, imageTag []byte) {
-    var result JobResult
+func AsyncPostImage(postResultChan chan<- JobResult, imageNameTag []byte) {
+	var result JobResult
 
-	cidTagPair, err := UploadImage2IPFS(imageTag)
+	cidNameTagPair, err := UploadImage2IPFS(imageNameTag)
 	if err != nil {
-        result.Error = err
+		result.Error = err
 	}
-    
-    // Add the cid to the CRDT key value store
-    crdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Name, Value: cidTagPair.Cid})
-    if err != nil {
-        result.Error = err
-    }
-    err = crdt.PostCrdtKeyValue(crdtPayload)
-    if err != nil {
-        result.Error = err
-    }
 
-    // Add the reverse lookup
-    reverseCrdtPayload, err := json.Marshal(models.Crdt{Key: cidTagPair.Cid, Value: cidTagPair.Name})
-    if err != nil {
-        result.Error = err
-    }
-    err = crdt.PostCrdtKeyValue(reverseCrdtPayload)
-    if err != nil {
-        result.Error = err
-    }
+	// Add the cid to the CRDT key value store
+	nameTag := cidNameTagPair.Name + ":" + cidNameTagPair.Tag
+	crdtPayload, err := json.Marshal(models.Crdt{Key: nameTag, Value: cidNameTagPair.Cid})
+	if err != nil {
+		result.Error = err
+	}
+	err = crdt.PostCrdtKeyValue(crdtPayload)
+	if err != nil {
+		result.Error = err
+	}
 
-    if result.Error == nil {
-        result.Data = models.ImageWithCID{
-            Name: cidTagPair.Name,
-            Cid: cidTagPair.Cid,
-        }
-    }
+	// Add the reverse lookup
+	reverseCrdtPayload, err := json.Marshal(
+		models.Crdt{Key: cidNameTagPair.Cid, Value: nameTag},
+	)
+	if err != nil {
+		result.Error = err
+	}
+	err = crdt.PostCrdtKeyValue(reverseCrdtPayload)
+	if err != nil {
+		result.Error = err
+	}
 
-    postResultChan <- result
+	if result.Error == nil {
+		result.Data = models.ImageWithCID{
+			Name: cidNameTagPair.Name,
+			Tag:  cidNameTagPair.Tag,
+			Cid:  cidNameTagPair.Cid,
+		}
+	}
+
+	postResultChan <- result
 }

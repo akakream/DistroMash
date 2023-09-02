@@ -10,6 +10,8 @@ definitions:
     properties:
       name:
         type: string
+      tag:
+        type: string
     type: object
   models.ImageWithCID:
     properties:
@@ -17,15 +19,17 @@ definitions:
         type: string
       name:
         type: string
+      tag:
+        type: string
     type: object
   models.StrategyPayload:
     properties:
       execute:
         type: boolean
+      nametag:
+        type: string
       percentage:
         type: integer
-      tag:
-        type: string
       target:
         type: string
       type:

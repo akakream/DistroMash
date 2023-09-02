@@ -31,13 +31,13 @@ func tagDoesNotExist(tag string, currentTags []string) bool {
 	return true
 }
 
-func resolveTagToCID(tag string, tagToCidChan chan<- string) {
-	// Check if the tag is already CID
-	c := tag
-	_, err := cid.Decode(tag)
+func resolveTagToCID(nametag string, nametagToCidChan chan<- string) {
+	// Check if the name:tag is already CID
+	c := nametag
+	_, err := cid.Decode(nametag)
 	if err != nil {
 		log.Println("Not a CID!")
-		val, err := getIfPresentOrPostCRDTstore(tag)
+		val, err := getIfPresentOrPostCRDTstore(nametag)
 		if err != nil {
 			log.Println(err)
 		} else {
@@ -45,17 +45,19 @@ func resolveTagToCID(tag string, tagToCidChan chan<- string) {
 		}
 	}
 
-	tagToCidChan <- c
+	nametagToCidChan <- c
 }
 
-func getIfPresentOrPostCRDTstore(tag string) (string, error) {
+func getIfPresentOrPostCRDTstore(nametag string) (string, error) {
 	// Check if an entry for the tag in the CRDT Store exists
-	crdtEntry, err := crdt.GetCrdtValue(tag)
+	crdtEntry, err := crdt.GetCrdtValue(nametag)
 	if err != nil {
-		log.Println("The tag-cid mapping does not exist")
+		log.Println("The name:tag-cid mapping does not exist")
 		// Download the docker image and push to crdt
+		nametagValues := strings.SplitN(nametag, ":", 2)
 		payload := models.Image{
-			Name: tag,
+			Name: nametagValues[0],
+			Tag:  nametagValues[1],
 		}
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
@@ -73,8 +75,8 @@ func getIfPresentOrPostCRDTstore(tag string) (string, error) {
 	return crdtEntry.Value, nil
 }
 
-func updatePeers(peers []string, tagToCidChan <-chan string) {
-	cidTag := <-tagToCidChan
+func updatePeers(peers []string, nametagToCidChan <-chan string) {
+	cidTag := <-nametagToCidChan
 
 	// Update every peer with the image
 	for _, peer := range peers {

@@ -7,7 +7,7 @@ type Strategy interface {
 // Strategy struct to describe a percentage strategy.
 type StrategyPayload struct {
 	Type       string `db:"type"       json:"type"`
-	Tag        string `db:"tag"        json:"tag"`
+	Nametag    string `db:"nametag"    json:"nametag"`
 	Percentage int    `db:"percentage" json:"percentage"`
 	Target     string `db:"target"     json:"target"`
 	Execute    bool   `db:"execute"    json:"execute"`

@@ -50,3 +50,35 @@ DistroMash meshes your docker image distribution.
 
 - Start ipfs daemon with `ipfs daemon`
 - Run DistroMash with `make run-all`
+- To see the web application, go to `localhost:3000`
+- To see the API, go to `localhost:3000/swagger`
+
+## How to register a strategy?
+
+There are two types of strategies: `percentage` and `target`:
+
+- `percentage` strategy replicates the Docker image in the given percentage of the edge environment. An example payload for `percentage` strategy looks like this:
+
+  ```{
+        "execute": true,
+        "nametag": "busybox:1.35.0",
+        "percentage": 50,
+        "target": "doesntmatter",
+        "type": "percentage"
+    }
+  ```
+
+  This strategy replicates busybox:1.35.0 image to the 50% of the nodes in the edge environment. It starts the execution rightaway.
+
+- `target` strategy replicates the Docker image to a specific edge node (target) in the edge environment. An example payload for `target` strategy looks like this:
+
+  ```{
+      "execute": true,
+      "nametag": "busybox:1.35.0",
+      "percentage": 0,
+      "target": "QmUdSkPo6Q3U3PmOJZM4Pk2Y5z5pJ8fyj433HQ4tUQbkX7",
+      "type": "target"
+  }
+  ```
+
+  This strategy replicates busybox:1.35.0 image to the target node in the edge environment. It starts the execution rightaway.

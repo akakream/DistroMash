@@ -17,7 +17,7 @@ import (
 // Strategy struct to describe a percentage strategy.
 type StrategyPercentage struct {
 	Type       string `db:"type"       json:"type"`
-	Tag        string `db:"tag"        json:"tag"`
+	Nametag    string `db:"nametag"    json:"nametag"`
 	Percentage int    `db:"percentage" json:"percentage"`
 	Execute    bool   `db:"execute"    json:"execute"`
 }
@@ -42,11 +42,11 @@ func (strategy *StrategyPercentage) Process() (string, string, error) {
 }
 
 func (strategy *StrategyPercentage) constructKey() (string, error) {
-	tag := strategy.Tag
+	tag := strategy.Nametag
 	// Reverse Lookup if CID instead of tag
-	_, err := cid.Decode(strategy.Tag)
+	_, err := cid.Decode(strategy.Nametag)
 	if err == nil {
-		crdtEntry, err := crdt.GetCrdtValue(strategy.Tag)
+		crdtEntry, err := crdt.GetCrdtValue(strategy.Nametag)
 		if err != nil {
 			log.Println("THE CID IS UNKNOWN!!!")
 			return "", errors.New(
@@ -91,9 +91,9 @@ func (strategy *StrategyPercentage) constructValue(percentage float64) (string, 
 
 func (strategy *StrategyPercentage) executeStrategy(key string, peerValues string) error {
 	peers := strings.Split(peerValues, ",")
-	tagToCidChan := make(chan string)
-	go resolveTagToCID(strategy.Tag, tagToCidChan)
-	go updatePeers(peers, tagToCidChan)
+	nametagToCidChan := make(chan string)
+	go resolveTagToCID(strategy.Nametag, nametagToCidChan)
+	go updatePeers(peers, nametagToCidChan)
 
 	return nil
 }

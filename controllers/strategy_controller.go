@@ -248,7 +248,7 @@ func parseKeyFromStrategyPayload(strategy *models.StrategyPayload) (string, erro
 	} else {
 		activity = "inactive"
 	}
-	fields := []string{strategy.Type, strategy.Tag, target, activity}
+	fields := []string{strategy.Type, strategy.Nametag, target, activity}
 	key := strings.Join(fields, "-")
 	return key, nil
 }
@@ -266,7 +266,7 @@ func parseStrategyFromKey(key string, stypes []string) (*models.StrategyPayload,
 		if i == 0 {
 			strategy.Type = field
 		} else if i == 1 {
-			strategy.Tag = field
+			strategy.Nametag = field
 		} else if i == 2 && keyFields[0] == "percentage" {
 			percentage, err := strconv.Atoi(field)
 			if err != nil {

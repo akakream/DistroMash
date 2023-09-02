@@ -363,6 +363,9 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string"
+                },
+                "tag": {
+                    "type": "string"
                 }
             }
         },
@@ -374,6 +377,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "tag": {
+                    "type": "string"
                 }
             }
         },
@@ -383,11 +389,11 @@ const docTemplate = `{
                 "execute": {
                     "type": "boolean"
                 },
+                "nametag": {
+                    "type": "string"
+                },
                 "percentage": {
                     "type": "integer"
-                },
-                "tag": {
-                    "type": "string"
                 },
                 "target": {
                     "type": "string"
