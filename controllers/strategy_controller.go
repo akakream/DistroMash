@@ -96,8 +96,8 @@ func PostStrategy(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-
-	if err := checkInput(&strategyPayload); err != nil {
+	strategyPayload, err := checkInput(strategyPayload)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
@@ -112,25 +112,21 @@ func PostStrategy(c *fiber.Ctx) error {
 	switch sType := strategyPayload.Type; sType {
 	case strategies.StrategyPercentageType:
 		var s strategies.StrategyPercentage
-		if err := json.Unmarshal(c.Body(), &s); err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
+		s.Nametag = strategyPayload.Nametag
+		s.Type = strategyPayload.Type
+		s.Execute = strategyPayload.Execute
+		s.Percentage = strategyPayload.Percentage
 		strategy = &s
 	case strategies.StrategyTargetType:
 		var s strategies.StrategyTarget
-		if err := json.Unmarshal(c.Body(), &s); err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
+		s.Nametag = strategyPayload.Nametag
+		s.Type = strategyPayload.Type
+		s.Execute = strategyPayload.Execute
+		s.Target = strategyPayload.Target
 		strategy = &s
 	}
 
-	key, value, err := strategy.Process()
+	key, value, err = strategy.Process()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -295,12 +291,15 @@ func contains(slice []string, key string) bool {
 	return false
 }
 
-func checkInput(strategy *models.StrategyPayload) error {
-	// TODO: ADD HERE OTHER RULES
+func checkInput(strategy models.StrategyPayload) (models.StrategyPayload, error) {
 	if strategy.Percentage > 100 || strategy.Percentage < 0 {
-		return errors.New("Percentage must be between 0 and 100")
+		return strategy, errors.New("Percentage must be between 0 and 100")
 	}
-	return nil
+	nametag := strings.Split(strategy.Nametag, ":")
+	if len(nametag) == 1 {
+		strategy.Nametag = strategy.Nametag + ":latest"
+	}
+	return strategy, nil
 }
 
 // DeleteStrategy deletes the strategy.
