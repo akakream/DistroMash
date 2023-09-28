@@ -295,6 +295,10 @@ func checkInput(strategy models.StrategyPayload) (models.StrategyPayload, error)
 	if strategy.Percentage > 100 || strategy.Percentage < 0 {
 		return strategy, errors.New("Percentage must be between 0 and 100")
 	}
+	if strategy.Type != strategies.StrategyPercentageType &&
+		strategy.Type != strategies.StrategyTargetType {
+		return strategy, errors.New("Type must be either percentage or target")
+	}
 	nametag := strings.Split(strategy.Nametag, ":")
 	if len(nametag) == 1 {
 		strategy.Nametag = strategy.Nametag + ":latest"
