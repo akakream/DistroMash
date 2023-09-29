@@ -11,6 +11,7 @@ DistroMash meshes your docker image distribution.
 - `git submodule init && git submodule update`
 - go version 1.20.5: [https://go.dev/doc/install](https://go.dev/doc/install)
 - IPFS Kubo 0.20.0 or above [https://docs.ipfs.tech/install/command-line/#system-requirements](https://docs.ipfs.tech/install/command-line/#system-requirements)
+- Docker
 
 ## Build
 
