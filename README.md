@@ -83,3 +83,13 @@ There are two types of strategies: `percentage` and `target`:
   ```
 
   This strategy replicates busybox:1.35.0 image to the target node in the edge environment. It starts the execution rightaway.
+
+## Web UI
+
+DistroMash also offers a web UI to explore the registered strategies, its distributed data store and the peers in the peer-to-peer network.
+
+- To check out the web UI, SSH tunnel to port 3000 (default) of one of the peers that runs DistroMash.
+
+```
+ssh -i ~/.ssh/gcp-instance-1 -L 3000:localhost:3000 username@IP
+```
