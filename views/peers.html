@@ -10,15 +10,7 @@
   <h1 style="margin-right: 10px">Peers</h1>
   <p>(including own peer identity)</p>
 </div>
-<ul
-  style="
-    height: 250px;
-    overflow-y: scroll;
-    border-style: solid;
-    border-radius: 10px;
-    border-width: 1px;
-  "
->
+<ul>
   {{range .Peers}}
   <li style="margin-bottom: 10px" class="peer">{{.}}</li>
   {{end}}
