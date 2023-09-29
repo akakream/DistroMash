@@ -1,14 +1,15 @@
-<h2>My Identity</h2>
-<h3>ID</h3>
-<p class="id">{{.HostID}}</p>
-<h3>Addresses</h3>
+<h1>Peer Identity</h1>
+<p style="color: #ffb300" class="id">{{.HostID}}</p>
 <ul>
   {{range .HostAddrs}}
-  <li class="addr">{{.}}</li>
+  <li style="color: #ffb300" class="addr">{{.}}</li>
   {{end}}
 </ul>
 
-<h2>Peers</h2>
+<div style="display: flex; align-items: center; justify-content: flex-start">
+  <h1 style="margin-right: 10px">Peers</h1>
+  <p>(including own peer identity)</p>
+</div>
 <ul
   style="
     height: 250px;
@@ -19,6 +20,6 @@
   "
 >
   {{range .Peers}}
-  <li class="peer">{{.}}</li>
+  <li style="margin-bottom: 10px" class="peer">{{.}}</li>
   {{end}}
 </ul>

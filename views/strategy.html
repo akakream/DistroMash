@@ -1,18 +1,20 @@
 <h1>Strategies</h1>
-<ul>
+<div style="width: 100%; display: flex">
+  <ul style="width: 100%">
     {{range .Strategy}}
-    <li class="strategy">
-        <button type="button">
-            <b>Type:</b> {{.Type}} <b>NameTag:</b> {{.Nametag}}
-            <b>Percentage:</b> {{.Percentage}} <b>Target:</b> {{.Target}}
-        </button>
-        <button type="button">
-            {{if .Execute}}
-            <span style="color: green">●</span>
-            {{else}}
-            <span style="color: gray">●</span>
-            {{end}}
-        </button>
+    <li style="width: 100%" class="strategy">
+      <button type="button">
+        <b>Type:</b> {{.Type}} <b>NameTag:</b> {{.Nametag}}
+        <b>Percentage:</b> {{.Percentage}} <b>Target:</b> {{.Target}}
+      </button>
+      <button type="button">
+        {{if .Execute}}
+        <span style="color: green">●</span>
+        {{else}}
+        <span style="color: gray">●</span>
+        {{end}}
+      </button>
     </li>
     {{end}}
-</ul>
+  </ul>
+</div>
