@@ -207,7 +207,8 @@ paths:
         in: body
         name: strategy
         required: true
-        schema: {}
+        schema:
+          $ref: '#/definitions/models.StrategyPayload'
       produces:
       - application/json
       responses:

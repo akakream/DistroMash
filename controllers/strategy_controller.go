@@ -183,15 +183,11 @@ func registerStrategyToCRDT(key string, value string) error {
 // @Tags Strategy
 // @Accept json
 // @Produce json
-// @Param strategy body models.Strategy true "Put Strategy"
+// @Param strategy body models.StrategyPayload true "Put Strategy"
 // @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy [put]
 func PutStrategy(c *fiber.Ctx) error {
-	// Return status 200 OK.
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"error": true,
-		"crdts": "NOT IMPLEMENTED",
-	})
+	return PostStrategy(c)
 }
 
 func GetStrategyListUI(c *fiber.Ctx) error {
@@ -316,6 +312,15 @@ func checkInput(strategy models.StrategyPayload) (models.StrategyPayload, error)
 // @Success 200 {object} models.StrategyPayload
 // @Router /api/v1/strategy/{key} [delete]
 func DeleteStrategy(c *fiber.Ctx) error {
+	err := crdt.DeleteCrdtKeyValue(c.Params("key"))
+	// Return status 500 Internal Server Error.
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
 	// Return status 200 OK.
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"error":    false,

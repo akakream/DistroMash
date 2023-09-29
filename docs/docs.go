@@ -238,7 +238,9 @@ const docTemplate = `{
                         "name": "strategy",
                         "in": "body",
                         "required": true,
-                        "schema": {}
+                        "schema": {
+                            "$ref": "#/definitions/models.StrategyPayload"
+                        }
                     }
                 ],
                 "responses": {
