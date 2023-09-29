@@ -1,3 +1,21 @@
+html,
+body {
+  margin: 0;
+}
+
+.wrapper {
+  min-height: 100vh;
+  margin: 0px auto -50px;
+}
+
+header {
+  height: 100px;
+}
+
+footer {
+  height: 50px;
+}
+
 a {
   text-decoration: none;
 }
@@ -5,7 +23,9 @@ a {
 .topnav {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   overflow: hidden;
+  height: 50px;
 }
 
 .topnav a {

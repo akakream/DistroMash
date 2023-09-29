@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>DistroMash</title>
     <link rel="stylesheet" href="/static/simple.min.css" />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
+
   <body>
     <header>
       <h1>DistroMash</h1>
     </header>
-    {{ template "navbar" . }} {{embed}}
-    <footer style="width: 100%">
-      @akakream
-    </footer>
+    {{ template "navbar" . }}
+    <div class="wrapper">{{embed}}</div>
+    <footer>@akakream</footer>
   </body>
 </html>
