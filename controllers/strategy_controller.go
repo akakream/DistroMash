@@ -246,7 +246,7 @@ func parseKeyFromStrategyPayload(strategy *models.StrategyPayload) (string, erro
 }
 
 func parseStrategyFromKey(key string, stypes []string) (*models.StrategyPayload, error) {
-	keyFields := strings.Split(key, "-")
+	keyFields := extractTagForEdgeCases(strings.Split(key, "-"))
 	var strategy models.StrategyPayload
 
 	// Check if strategy
@@ -276,6 +276,21 @@ func parseStrategyFromKey(key string, stypes []string) (*models.StrategyPayload,
 		}
 	}
 	return &strategy, nil
+}
+
+func extractTagForEdgeCases(keyFields []string) []string {
+	if len(keyFields) == 4 {
+		return keyFields
+	}
+
+	var updatedKeyFields []string
+	lenKeyFields := len(keyFields)
+	updatedKeyFields[0] = keyFields[0]
+	updatedKeyFields[2] = keyFields[lenKeyFields-2]
+	updatedKeyFields[3] = keyFields[lenKeyFields-1]
+	updatedKeyFields[1] = strings.Join(keyFields[1:(lenKeyFields-1)], "")
+
+	return updatedKeyFields
 }
 
 func contains(slice []string, key string) bool {
