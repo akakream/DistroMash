@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to your JSON configuration file
-config_file="~/.ipfs/config"
+config_file="$HOME/.ipfs/config"
 
 # Check if the configuration file exists
 if [ -f "$config_file" ]; then
