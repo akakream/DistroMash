@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"strings"
+	"sync"
 
 	"github.com/ipfs/go-cid"
 
@@ -77,35 +78,40 @@ func getIfPresentOrPostCRDTstore(nametag string) (string, error) {
 
 func updatePeers(peers []string, nametagToCidChan <-chan string) {
 	cidTag := <-nametagToCidChan
+	var wg sync.WaitGroup
 
 	// Update every peer with the image
 	for _, peer := range peers {
-		var keyValue models.Crdt
-		currentValue, err := crdt.GetCrdtValue(peer)
-		// It does not exist
-		if err != nil {
-			// Register
-			keyValue = models.Crdt{
-				Key:   peer,
-				Value: cidTag,
-			}
-		} else {
-			// Update
-			currentTags := strings.Split(currentValue.Value, ",")
-			if tagDoesNotExist(cidTag, currentTags) {
-				currentTags = append(currentTags, cidTag)
-				updatedTags := strings.Join(currentTags, ",")
+		wg.Add(1)
+		go func(peer string) {
+			defer wg.Done()
+			var keyValue models.Crdt
+			currentValue, err := crdt.GetCrdtValue(peer)
+			// It does not exist
+			if err != nil {
+				// Register
 				keyValue = models.Crdt{
 					Key:   peer,
-					Value: updatedTags,
+					Value: cidTag,
 				}
 			} else {
-				// If key exists, do not update
-				continue
+				// Update
+				currentTags := strings.Split(currentValue.Value, ",")
+				if tagDoesNotExist(cidTag, currentTags) {
+					currentTags = append(currentTags, cidTag)
+					updatedTags := strings.Join(currentTags, ",")
+					keyValue = models.Crdt{
+						Key:   peer,
+						Value: updatedTags,
+					}
+				} else {
+					// If key exists, do not update
+					return
+				}
 			}
-		}
 
-		byteKeyValue, err := json.Marshal(keyValue)
-		crdt.PostCrdtKeyValue(byteKeyValue)
+			byteKeyValue, err := json.Marshal(keyValue)
+			crdt.PostCrdtKeyValue(byteKeyValue)
+		}(peer)
 	}
 }
