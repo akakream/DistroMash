@@ -50,6 +50,30 @@ func UploadImage2IPFS(imageName []byte) (*models.ImageWithCID, error) {
 	return &data, nil
 }
 
+func PinCid(cid string) error {
+	url := fmt.Sprintf("http://%s/pin/%s", utils.Multiplatform2ipfsURL, cid)
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	// Check response
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf(
+			"Non-OK HTTP status from the api with status code %d",
+			resp.StatusCode,
+		)
+	}
+
+	return nil
+}
+
 type JobResult struct {
 	Data  models.ImageWithCID
 	Error error

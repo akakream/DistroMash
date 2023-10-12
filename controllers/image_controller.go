@@ -26,3 +26,27 @@ func PostImage(c *fiber.Ctx) error {
 		"msg":   "Upload order is given and being processed.",
 	})
 }
+
+// PinCid pins a cid
+// @Description Pin cid.
+// @Summary pin cid
+// @Tags Cid
+// @Accept json
+// @Produce json
+// @Param cid path string true "Cid"
+// @Success 200 {object} models.Crdt
+// @Router /api/v1/pin/{cid} [post]
+func PinCid(c *fiber.Ctx) error {
+	err := ipfs.PinCid(c.Params("cid"))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error": false,
+		"msg":   "OK",
+	})
+}

@@ -23,4 +23,5 @@ func PublicRoutes(app *fiber.App) {
 	v1.Delete("/crdt", controllers.PurgeDatastore)
 
 	v1.Post("/image", controllers.PostImage)
+	v1.Post("/pin/:cid", controllers.PinCid)
 }
