@@ -19,9 +19,9 @@ def read_csv(file_path):
 
 
 # Replace 'your_data.csv' with the actual file path to your CSV file.
-docker_file_path = "../networkDataDockerRegistry.csv"
-distro_file_path = "../networkDataDistroMash.csv"
-spegel_file_path = "../networkDataDistroMash.csv"
+docker_file_path = "../CONCURRENTnetworkDataDockerRegistry.csv"
+distro_file_path = "../CONCURRENTnetworkDataDistroMash.csv"
+spegel_file_path = "../CONCURRENTnetworkDataSpegel.csv"
 
 do_time, do_out = read_csv(docker_file_path)
 do_time = [(t - do_time[0]).total_seconds() for t in do_time]
@@ -44,9 +44,9 @@ sp_out = (
 
 # Create the plot
 plt.figure(figsize=(12, 6))
+plt.plot(sp_time, sp_out, label="Spegel", color="green")
 plt.plot(do_time, do_out, label="Official Docker Registry", color="orange")
 plt.plot(di_time, di_out, label="DistroMash", color="blue")
-plt.plot(sp_time, sp_out, label="Spegel", color="green")
 plt.xlabel("Experiment Duration (s)")
 plt.ylabel("Network Utilization (Mbps)")
 plt.title("Network Utilization Over Time", fontweight="bold")

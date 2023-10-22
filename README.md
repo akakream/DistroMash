@@ -93,3 +93,7 @@ DistroMash also offers a web UI to explore the registered strategies, its distri
 ```
 ssh -i ~/.ssh/gcp-instance-1 -L 3000:localhost:3000 username@IP
 ```
+
+## TODO
+
+- When strategy is removed, `docker rmi` images from nodes

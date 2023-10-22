@@ -5,9 +5,10 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 sudo cp /var/lib/rancher/k3s/agent/etc/containerd/config.toml /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
 
+sudo vim /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
 # Add the following to /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-# [plugins."io.containerd.grpc.v1.cri".registry]
-#   config_path = "/etc/containerd/certs.d"
+[plugins."io.containerd.grpc.v1.cri".registry]
+    config_path = "/etc/containerd/certs.d"
 
 sudo systemctl restart containerd
 sudo systemctl restart k3s.service

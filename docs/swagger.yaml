@@ -160,6 +160,27 @@ paths:
       summary: upload a multi-platform docker image to ipfs and get the cid
       tags:
       - Image
+  /api/v1/pin/{cid}:
+    post:
+      consumes:
+      - application/json
+      description: Pin cid.
+      parameters:
+      - description: Cid
+        in: path
+        name: cid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Crdt'
+      summary: pin cid
+      tags:
+      - Cid
   /api/v1/strategy:
     get:
       consumes:
