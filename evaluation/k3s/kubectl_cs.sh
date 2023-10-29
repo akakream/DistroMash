@@ -6,6 +6,8 @@ kubectl logs spegel-njqqb -n=spegel
 
 kubectl describe pod spegel-njqqb -n=spegel
 
+kubectl delete all --all --namespace=spegel
+
 
 
 #### SPEGEL
