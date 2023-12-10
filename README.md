@@ -1,4 +1,16 @@
-# DistroMash
+<h1 align="center">
+  <br>
+  <img src="logo.png" alt="DistroMash logo" title="DistroMash logo" width="200">
+  <br>
+  DistroMash
+  <br>
+</h1>
+
+<p align="center" style="font-size: 1.2rem;">Distributing Docker images using IPFS.</p>
+
+<hr />
+
+## What is DistroMash?
 
 DistroMash meshes your docker image distribution.
 
