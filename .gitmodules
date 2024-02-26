@@ -3,7 +3,7 @@
 	url = ../MultiPlatform2IPFS.git
 [submodule "ipdr2"]
 	path = ipdr2
-	url = ../ipdr2.git
+	url = ../ipdr.git
 [submodule "P2PComm"]
 	path = P2PComm
 	url = ../P2PComm.git
